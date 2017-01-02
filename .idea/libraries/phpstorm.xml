@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="phpstorm">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/lib/phpstorm.jar!/" />
+      <root url="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/plugins/CSS/lib/css.jar!/" />
+      <root url="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/plugins/css/lib/css-openapi.jar!/" />
+      <root url="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/plugins/php/lib/php-openapi.jar!/" />
+      <root url="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/plugins/php/lib/php.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

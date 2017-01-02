@@ -1,0 +1,28 @@
+<idea-plugin version="2">
+  <!-- general information -->
+  <id>com.kalessil.phpStorm.yii2inspections</id>
+  <name>Yii2 Inspections</name>
+  <version>0.0.1-dev</version>
+  <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
+
+  <!-- description and change notes -->
+  <description><![CDATA[
+      Yii2 Inspections for PhpStorm/IdeaUltimate
+    ]]></description>
+  <change-notes><![CDATA[
+      2 Jan 2017: project skeleton<br>
+    ]]>
+  </change-notes>
+
+  <!-- platform dependencies declaration -->
+  <idea-version since-build="162.1889"/> <!-- PS 2016.2 and newer -->
+  <depends>com.jetbrains.php</depends>
+  <depends>com.intellij.modules.platform</depends>
+
+  <!-- extensions point -->
+  <extensions defaultExtensionNs="com.intellij">
+  </extensions>
+  <actions>
+  </actions>
+
+</idea-plugin>
