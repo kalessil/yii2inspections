@@ -19,5 +19,9 @@ public class UpdateTranslationsAction extends AnAction {
 
     @Override
     public void update(AnActionEvent event) {
+        if (null != event.getProject()) {
+            event.getPresentation().setEnabled(true);
+            event.getPresentation().setVisible(true);
+        }
     }
 }
