@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.yii2inspections.actions;
+package com.kalessil.phpStorm.yii2inspections.actors;
 
 /*
  * This file is part of the Yii2 Inspections package.
