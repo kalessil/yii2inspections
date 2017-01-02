@@ -19,8 +19,12 @@
     <depends>com.jetbrains.php</depends>
     <depends>com.intellij.modules.platform</depends>
 
-    <!-- extensions points -->
+
     <extensions defaultExtensionNs="com.intellij">
+        <localInspection language="PHP" groupPath="PHP,Yii2 Inspections"
+            shortName="PropertyFeatureAnnotatedInspection" displayName="@property Inspector"
+            groupName="Architecture"                       enabledByDefault="true" level="WARNING"
+            implementationClass="com.kalessil.phpStorm.yii2inspections.inspectors.PropertyFeatureAnnotatedInspector"/>
     </extensions>
 
     <actions>
@@ -28,7 +32,7 @@
         <!-- see also https://github.com/ahubold/intellij-optimize-imports-for-scope -->
         <!-- see also .../IntelliJ IDEA 2016.2.5/lib/resources.jar!/idea/PlatformLangActionManager.xml:59 -->
         <action id="yii2UpdateTranslations"
-                class="com.kalessil.phpStorm.yii2inspections.actions.UpdateTranslationsAction"
+                class="com.kalessil.phpStorm.yii2inspections.actions.UpdateTranslationsActor"
                 text="Update Yii2 translations" description="Adds missing and drops unused translations"
         >
             <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="InspectCode"/>

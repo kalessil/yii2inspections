@@ -12,9 +12,10 @@ package com.kalessil.phpStorm.yii2inspections.actions;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 
-public class UpdateTranslationsAction extends AnAction {
+public class UpdateTranslationsActor extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent event) {
+        /* TODO: implement */
     }
 
     @Override
