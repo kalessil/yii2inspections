@@ -21,6 +21,8 @@
 
 
     <extensions defaultExtensionNs="com.intellij">
+        <projectConfigurable instance="com.kalessil.phpStorm.yii2inspections.Yii2InspectionsProjectConfig"/>
+
         <localInspection language="PHP" groupPath="PHP,Yii2 Inspections"
             shortName="PropertyFeatureAnnotatedInspection" displayName="@property Inspector"
             groupName="Architecture"                       enabledByDefault="true" level="WARNING"
