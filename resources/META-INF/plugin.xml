@@ -1,42 +1,35 @@
 <idea-plugin version="2">
-    <!-- general information -->
-    <id>com.kalessil.phpStorm.yii2inspections</id>
-    <name>Yii2 Inspections</name>
-    <version>0.0.1-dev</version>
-    <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
+  <id>com.your.company.unique.plugin.id</id>
+  <name>Plugin display name here</name>
+  <version>1.0</version>
+  <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
 
-    <!-- description and change notes -->
-    <description><![CDATA[
-      Yii2 Inspections for PhpStorm/IdeaUltimate
+  <description><![CDATA[
+      Enter short description for your plugin here.<br>
+      <em>most HTML tags may be used</em>
     ]]></description>
-    <change-notes><![CDATA[
-      2 Jan 2017: project skeleton<br>
+
+  <change-notes><![CDATA[
+      Add change notes here.<br>
+      <em>most HTML tags may be used</em>
     ]]>
-    </change-notes>
+  </change-notes>
 
-    <!-- platform dependencies declaration -->
-    <idea-version since-build="162.1889"/> <!-- PS 2016.2 and newer -->
-    <depends>com.jetbrains.php</depends>
-    <depends>com.intellij.modules.platform</depends>
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+  <idea-version since-build="141.0"/>
 
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  <depends>com.intellij.modules.lang</depends>
+  -->
 
-    <extensions defaultExtensionNs="com.intellij">
-        <localInspection language="PHP" groupPath="PHP,Yii2 Inspections"
-            shortName="PropertyFeatureAnnotatedInspection" displayName="@property Inspector"
-            groupName="Architecture"                       enabledByDefault="true" level="WARNING"
-            implementationClass="com.kalessil.phpStorm.yii2inspections.inspectors.PropertyFeatureAnnotatedInspector"/>
-    </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+  </extensions>
 
-    <actions>
-        <!-- see also com.intellij.codeInsight.actions.OptimizeImportsAction -->
-        <!-- see also https://github.com/ahubold/intellij-optimize-imports-for-scope -->
-        <!-- see also .../IntelliJ IDEA 2016.2.5/lib/resources.jar!/idea/PlatformLangActionManager.xml:59 -->
-        <action id="yii2UpdateTranslations"
-                class="com.kalessil.phpStorm.yii2inspections.actors.UpdateTranslationsActor"
-                text="Update Yii2 translations" description="Adds missing and drops unused translations"
-        >
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="InspectCode"/>
-        </action>
-    </actions>
+  <actions>
+    <!-- Add your actions here -->
+  </actions>
 
 </idea-plugin>
