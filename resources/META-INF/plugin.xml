@@ -1,28 +1,37 @@
 <idea-plugin version="2">
-  <!-- general information -->
-  <id>com.kalessil.phpStorm.yii2inspections</id>
-  <name>Yii2 Inspections</name>
-  <version>0.0.1-dev</version>
-  <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
+    <!-- general information -->
+    <id>com.kalessil.phpStorm.yii2inspections</id>
+    <name>Yii2 Inspections</name>
+    <version>0.0.1-dev</version>
+    <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
-  <!-- description and change notes -->
-  <description><![CDATA[
+    <!-- description and change notes -->
+    <description><![CDATA[
       Yii2 Inspections for PhpStorm/IdeaUltimate
     ]]></description>
-  <change-notes><![CDATA[
+    <change-notes><![CDATA[
       2 Jan 2017: project skeleton<br>
     ]]>
-  </change-notes>
+    </change-notes>
 
-  <!-- platform dependencies declaration -->
-  <idea-version since-build="162.1889"/> <!-- PS 2016.2 and newer -->
-  <depends>com.jetbrains.php</depends>
-  <depends>com.intellij.modules.platform</depends>
+    <!-- platform dependencies declaration -->
+    <idea-version since-build="162.1889"/> <!-- PS 2016.2 and newer -->
+    <depends>com.jetbrains.php</depends>
+    <depends>com.intellij.modules.platform</depends>
 
-  <!-- extensions point -->
-  <extensions defaultExtensionNs="com.intellij">
-  </extensions>
-  <actions>
-  </actions>
+    <!-- extensions points -->
+    <extensions defaultExtensionNs="com.intellij">
+    </extensions>
+
+    <actions>
+        <!-- see also com.intellij.codeInsight.actions.OptimizeImportsAction -->
+        <!-- see also https://github.com/ahubold/intellij-optimize-imports-for-scope -->
+        <action id="yii2UpdateTranslations"
+                class="com.kalessil.phpStorm.yii2inspections.actions.UpdateTranslationsAction"
+                text="Update Yii2 translations" description="Adds missing and drops unused translations"
+        >
+            <add-to-group group-id="InspectCodeGroup" anchor="last"/>
+        </action>
+    </actions>
 
 </idea-plugin>
