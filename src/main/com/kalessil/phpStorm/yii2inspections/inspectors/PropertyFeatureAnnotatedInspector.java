@@ -53,8 +53,12 @@ final public class PropertyFeatureAnnotatedInspector extends PhpInspection {
 
                 /* iterate get methods, find matching set methods */
                 final Set<String> props = this.findPropertyCandidates(clazz);
-                holder.registerProblem(clazz.getNameIdentifier(), props.toString(), ProblemHighlightType.WEAK_WARNING);
-                props.clear();
+                if (props.size() > 0) {
+                    /* TODO: extract already annotated properties */
+                    holder.registerProblem(clazz.getNameIdentifier(), props.toString(), ProblemHighlightType.WEAK_WARNING);
+
+                    props.clear();
+                }
             }
 
             @NotNull
@@ -73,18 +77,23 @@ final public class PropertyFeatureAnnotatedInspector extends PhpInspection {
                 methods.clear();
 
                 /* process extracted methods*/
-                for (String methodName : mappedMethods.keySet()) {
+                for (String getterCandidate : mappedMethods.keySet()) {
                     /* check only get */
-                    if (!methodName.startsWith("get")) {
+                    if (!getterCandidate.startsWith("get")) {
                         continue;
                     }
-                    final String setter = methodName.replaceAll("^get", "set");
+                    final String setter = getterCandidate.replaceAll("^get", "set");
                     if (!mappedMethods.containsKey(setter)) {
                         continue;
                     }
 
+                    /* additional check: methods should not be static */
+                    if (mappedMethods.get(setter).isStatic() || mappedMethods.get(getterCandidate).isStatic()) {
+                        continue;
+                    }
+
                     /* put the property, keep original naming */
-                    props.add(methodName.replaceAll("^get", ""));
+                    props.add(getterCandidate.replaceAll("^get", ""));
                 }
 
                 return props;

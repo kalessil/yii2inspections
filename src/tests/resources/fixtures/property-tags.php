@@ -11,5 +11,11 @@ class ClassNeedsProperties extends Object {
     public function setAuthor($author) {}
 }
 
-class ClassNeedsNoProperties extends Object {
+class ClassNeedsNoPropertiesHasStatic extends Object {
+    public static function getAuthor()        {}
+    public static function setAuthor($author) {}
+}
+
+class ClassNeedsNoPropertiesHasOnlyGet extends Object {
+    public function getAuthor() {}
 }
