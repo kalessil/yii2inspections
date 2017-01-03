@@ -161,7 +161,7 @@ final public class PropertyFeatureAnnotatedInspector extends PhpInspection {
                 if (!(previous instanceof PhpDocComment)) {
                     /* injection marker needed due to psi-tree structure for NS-ed and not NS-ed classes */
                     final PsiElement injectionMarker;
-                    if (clazz.getParent() instanceof GroupStatement) {
+                    if (null == previous && clazz.getParent() instanceof GroupStatement) {
                         previous        = ((GroupStatement) clazz.getParent()).getPrevPsiSibling();
                         injectionMarker = previous instanceof PhpDocComment ? null : clazz.getParent();
                     } else {
@@ -170,7 +170,7 @@ final public class PropertyFeatureAnnotatedInspector extends PhpInspection {
 
                     PsiElement block = PhpPsiElementFactory.createFromText(project, PhpDocComment.class, "/**\n */\n");
                     if (null != injectionMarker && null != block) {
-                        clazz.getParent().addBefore(block, injectionMarker);
+                        injectionMarker.getParent().addBefore(block, injectionMarker);
                         previous = clazz.getPrevPsiSibling();
                     }
                 }
@@ -191,6 +191,9 @@ final public class PropertyFeatureAnnotatedInspector extends PhpInspection {
 
                     /* inject properties definition */
                     final String pattern  = lines.peekLast().replaceAll("[\\s/]+$", " ");
+                    if (0 == injectionIndex) {
+                        lines.add(lines.size() - 1, pattern);
+                    }
                     for (String propertyName : this.properties) {
                         if (injectionIndex > 0) {
                             lines.add(injectionIndex, pattern + "@property mixed $" + propertyName);
