@@ -4,12 +4,8 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.inspections.PhpInspection;
@@ -69,16 +65,16 @@ final public class PropertyFeatureAnnotatedInspector extends PhpInspection {
                 }
 
                 /* iterate get methods, find matching set methods */
-                final Set<String> props = this.findPropertyCandidates(clazz);
+                final Map<String, String> props = this.findPropertyCandidates(clazz);
                 if (props.size() > 0) {
-                    final String message = messagePattern.replace("%p%", String.join("', '", props));
+                    final String message = messagePattern.replace("%p%", String.join("', '", props.keySet()));
                     holder.registerProblem(nameNode, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(props));
                 }
             }
 
             @NotNull
-            private Set<String> findPropertyCandidates(@NotNull PhpClass clazz) {
-                final Set<String> properties = new HashSet<>();
+            private Map<String, String> findPropertyCandidates(@NotNull PhpClass clazz) {
+                final Map<String, String> properties = new HashMap<>();
 
                 /* extract methods and operate on name-methods relations */
                 final Method[] methods = clazz.getOwnMethods();
@@ -108,8 +104,15 @@ final public class PropertyFeatureAnnotatedInspector extends PhpInspection {
                         continue;
                     }
 
-                    /* store property as required */
-                    properties.add(StringUtils.uncapitalize(getter.replaceAll("^get", "")));
+                    /* store property and it's types */
+                    final Set<String> getterTypes = getterMethod.getType().filterUnknown().getTypes();
+                    final Parameter[] setterParams = setterMethod.getParameters();
+                    if (setterParams.length > 0) {
+                        getterTypes.addAll(setterParams[0].getType().filterUnknown().getTypes());
+                    }
+                    final String typesAsString = getterTypes.isEmpty() ? "mixed" : String.join("|", getterTypes);
+
+                    properties.put(StringUtils.uncapitalize(getter.replaceAll("^get", "")), typesAsString);
                 }
 
                 /* exclude annotated properties: lazy bulk operation */
@@ -132,9 +135,9 @@ final public class PropertyFeatureAnnotatedInspector extends PhpInspection {
     }
 
     private static class TheLocalFix implements LocalQuickFix {
-        final private Set<String> properties;
+        final private Map<String, String> properties;
 
-        TheLocalFix(@NotNull Set<String> properties) {
+        TheLocalFix(@NotNull Map<String, String> properties) {
             super();
             this.properties = properties;
         }
@@ -196,12 +199,11 @@ final public class PropertyFeatureAnnotatedInspector extends PhpInspection {
                     if (0 == injectionIndex) {
                         lines.add(lines.size() - 1, pattern);
                     }
-                    for (String propertyName : this.properties) {
-                        if (injectionIndex > 0) {
-                            lines.add(injectionIndex, pattern + "@property mixed $" + propertyName);
-                        } else {
-                            lines.add(lines.size() - 1, pattern + "@property mixed $" + propertyName);
-                        }
+                    for (String propertyName : this.properties.keySet()) {
+                        final String types   = this.properties.get(propertyName);
+                        final String newLine = pattern + "@property " + types + " $" + propertyName;
+
+                        lines.add((injectionIndex > 0 ? injectionIndex : lines.size() - 1), newLine);
                     }
                     this.properties.clear();
 
