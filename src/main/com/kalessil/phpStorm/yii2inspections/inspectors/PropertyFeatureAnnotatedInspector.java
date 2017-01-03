@@ -4,6 +4,9 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementFactory;
@@ -81,15 +84,14 @@ final public class PropertyFeatureAnnotatedInspector extends PhpInspection {
                 final Set<String> properties = new HashSet<>();
 
                 /* extract methods and operate on name-methods relations */
-                final Collection<Method> methods = clazz.getMethods();
-                if (null == methods || 0 == methods.size()) {
+                final Method[] methods = clazz.getOwnMethods();
+                if (null == methods || 0 == methods.length) {
                     return properties;
                 }
                 final Map<String, Method> mappedMethods = new HashMap<>();
                 for (Method method : methods) {
                     mappedMethods.put(method.getName(), method);
                 }
-                methods.clear();
 
                 /* process extracted methods*/
                 for (String getterCandidate : mappedMethods.keySet()) {
@@ -163,7 +165,7 @@ final public class PropertyFeatureAnnotatedInspector extends PhpInspection {
                 if (previous instanceof PhpDocComment) {
                     /* reassemble for processing */
                     final LinkedList<String> lines = new LinkedList<>(Arrays.asList(previous.getText().split("\\n")));
-                    final String lastLine          = lines.peekLast();
+                    final String lastLine          = lines.pollLast();
 
                     /* inject properties definition */
                     final String pattern  = lastLine.replaceAll("[\\s/]+$", " ");
@@ -174,7 +176,7 @@ final public class PropertyFeatureAnnotatedInspector extends PhpInspection {
 
                     /* generate a new node and replace the old one */
                     lines.add(lastLine);
-                    final String newContent = String.join("\\n", lines);
+                    final String newContent = String.join("\n", lines);
                     lines.clear();
                     PsiElement newBlock = PhpPsiElementFactory.createFromText(project, PhpDocComment.class, newContent);
                     if (null != newBlock) {
