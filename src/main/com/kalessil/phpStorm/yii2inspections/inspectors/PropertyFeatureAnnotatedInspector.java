@@ -165,23 +165,34 @@ final public class PropertyFeatureAnnotatedInspector extends PhpInspection {
                 if (previous instanceof PhpDocComment) {
                     /* reassemble for processing */
                     final LinkedList<String> lines = new LinkedList<>(Arrays.asList(previous.getText().split("\\n")));
-                    final String lastLine          = lines.pollLast();
+
+                    /* check if we have already properties */
+                    int injectionIndex = 0;
+                    for (int i = lines.size() - 1; i > 0; --i) {
+                        if (lines.get(i).contains("@property")) {
+                            injectionIndex = i;
+                            break;
+                        }
+                    }
 
                     /* inject properties definition */
-                    final String pattern  = lastLine.replaceAll("[\\s/]+$", " ");
+                    final String pattern  = lines.peekLast().replaceAll("[\\s/]+$", " ");
                     for (String propertyName : this.properties) {
-                        lines.add(pattern + "@property mixed $" + propertyName);
+                        if (injectionIndex > 0) {
+                            lines.add(injectionIndex, pattern + "@property mixed $" + propertyName);
+                        } else {
+                            lines.add(lines.size() - 1, pattern + "@property mixed $" + propertyName);
+                        }
                     }
                     this.properties.clear();
 
                     /* generate a new node and replace the old one */
-                    lines.add(lastLine);
                     final String newContent = String.join("\n", lines);
-                    lines.clear();
                     PsiElement newBlock = PhpPsiElementFactory.createFromText(project, PhpDocComment.class, newContent);
                     if (null != newBlock) {
                         previous.replace(newBlock);
                     }
+                    lines.clear();
                 }
             }
         }
