@@ -91,23 +91,25 @@ final public class PropertyFeatureAnnotatedInspector extends PhpInspection {
                 }
 
                 /* process extracted methods*/
-                for (String getterCandidate : mappedMethods.keySet()) {
-                    /* check only get */
-                    if (getterCandidate.length() <= 3 || !getterCandidate.startsWith("get")) {
+                for (String getter : mappedMethods.keySet()) {
+                    /* ensure getter has a complimentary setter */
+                    if (getter.length() <= 3 || !getter.startsWith("get")) {
                         continue;
                     }
-                    final String setter = getterCandidate.replaceAll("^get", "set");
+                    final String setter = getter.replaceAll("^get", "set");
                     if (!mappedMethods.containsKey(setter)) {
                         continue;
                     }
 
-                    /* additional check: methods should not be static */
-                    if (mappedMethods.get(setter).isStatic() || mappedMethods.get(getterCandidate).isStatic()) {
+                    /* additional checks: get has no parameters, complimentary methods should not be static */
+                    final Method getterMethod = mappedMethods.get(getter);
+                    final Method setterMethod = mappedMethods.get(setter);
+                    if (setterMethod.isStatic() || getterMethod.isStatic() || 0 != getterMethod.getParameters().length) {
                         continue;
                     }
 
                     /* store property as required */
-                    properties.add(StringUtils.uncapitalize(getterCandidate.replaceAll("^get", "")));
+                    properties.add(StringUtils.uncapitalize(getter.replaceAll("^get", "")));
                 }
 
                 /* exclude annotated properties: lazy bulk operation */
