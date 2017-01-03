@@ -110,6 +110,11 @@ final public class PropertyFeatureAnnotatedInspector extends PhpInspection {
                 if (properties.size() > 0) {
                     final Collection<Field> fields = clazz.getFields();
                     for (Field candidate : fields) {
+                        /* do not process constants and static fields */
+                        if (candidate.isConstant() || candidate.getModifier().isStatic()) {
+                            continue;
+                        }
+
                         properties.remove(candidate.getName());
                     }
                     fields.clear();
