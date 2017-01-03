@@ -14,10 +14,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
-import com.jetbrains.php.lang.psi.elements.Field;
-import com.jetbrains.php.lang.psi.elements.Method;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
-import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.yii2inspections.inspectors.utils.InheritanceChainExtractUtil;
 import com.kalessil.phpStorm.yii2inspections.inspectors.utils.NamedElementUtil;
@@ -162,9 +159,18 @@ final public class PropertyFeatureAnnotatedInspector extends PhpInspection {
 
                 /* inject new DocBlock before the class if needed */
                 if (!(previous instanceof PhpDocComment)) {
+                    /* injection marker needed due to psi-tree structure for NS-ed and not NS-ed classes */
+                    final PsiElement injectionMarker;
+                    if (clazz.getParent() instanceof GroupStatement) {
+                        previous        = ((GroupStatement) clazz.getParent()).getPrevPsiSibling();
+                        injectionMarker = previous instanceof PhpDocComment ? null : clazz.getParent();
+                    } else {
+                        injectionMarker = clazz;
+                    }
+
                     PsiElement block = PhpPsiElementFactory.createFromText(project, PhpDocComment.class, "/**\n */\n");
-                    if (null != block) {
-                        clazz.getParent().addBefore(block, clazz);
+                    if (null != injectionMarker && null != block) {
+                        clazz.getParent().addBefore(block, injectionMarker);
                         previous = clazz.getPrevPsiSibling();
                     }
                 }
