@@ -4,11 +4,18 @@ namespace yii\base;
 
 class Object {}
 
-class ClassNeedsProperties extends Object {
+/**
+ * @property $book
+ */
+class <weak_warning descr="'author': properties needs to be annotated">ClassNeedsProperties</weak_warning> extends Object {
     private $_author;
+    private $_book;
 
     public function getAuthor()        {}
     public function setAuthor($author) {}
+
+    public function getBook()          {}
+    public function setBook($book)     {}
 }
 
 class ClassNeedsNoPropertiesHasStatic extends Object {
