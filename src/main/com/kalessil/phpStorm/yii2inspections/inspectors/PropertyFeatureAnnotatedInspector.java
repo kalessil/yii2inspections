@@ -96,7 +96,7 @@ final public class PropertyFeatureAnnotatedInspector extends PhpInspection {
                 /* process extracted methods*/
                 for (String getterCandidate : mappedMethods.keySet()) {
                     /* check only get */
-                    if (!getterCandidate.startsWith("get")) {
+                    if (getterCandidate.length() <= 3 || !getterCandidate.startsWith("get")) {
                         continue;
                     }
                     final String setter = getterCandidate.replaceAll("^get", "set");
