@@ -160,8 +160,16 @@ final public class PropertyFeatureAnnotatedInspector extends PhpInspection {
                 final PhpClass clazz   = (PhpClass) clazzCandidate;
                 PhpPsiElement previous = clazz.getPrevPsiSibling();
 
-                /* create PhpDoc if it's missing */
+                /* inject new DocBlock before the class if needed */
+                if (!(previous instanceof PhpDocComment)) {
+                    PsiElement block = PhpPsiElementFactory.createFromText(project, PhpDocComment.class, "/**\n */\n");
+                    if (null != block) {
+                        clazz.getParent().addBefore(block, clazz);
+                        previous = clazz.getPrevPsiSibling();
+                    }
+                }
 
+                /* perform injection into the DocBlock */
                 if (previous instanceof PhpDocComment) {
                     /* reassemble for processing */
                     final LinkedList<String> lines = new LinkedList<>(Arrays.asList(previous.getText().split("\\n")));
