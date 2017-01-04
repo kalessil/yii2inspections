@@ -20,7 +20,7 @@ import java.util.LinkedList;
  * file that was distributed with this source code.
  */
 
-final public class ProjectFilesFinder implements Iterator {
+final class ProjectFilesFinder implements Iterator {
     private final LinkedList<PsiFileSystemItem> items = new LinkedList<>();
 
     ProjectFilesFinder(@NotNull Project project) {

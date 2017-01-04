@@ -19,14 +19,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * file that was distributed with this source code.
  */
 
-final public class ProjectTranslationCallsFinder {
+final class ProjectTranslationCallsFinder {
     final private PsiFile file;
 
     ProjectTranslationCallsFinder(@NotNull PsiFile file) {
         this.file = file;
     }
 
-    public void find(ConcurrentHashMap<String, ConcurrentHashMap<String, String>> storage) {
+    void find(ConcurrentHashMap<String, ConcurrentHashMap<String, String>> storage) {
         final Collection<MethodReference> calls = PsiTreeUtil.findChildrenOfType(this.file, MethodReference.class);
         for (MethodReference call : calls) {
             final PsiElement[] params = call.getParameters();

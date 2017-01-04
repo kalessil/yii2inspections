@@ -1,14 +1,5 @@
 package com.kalessil.phpStorm.yii2inspections.actors.upadateTranslations;
 
-/*
- * This file is part of the Yii2 Inspections package.
- *
- * Author: Vladimir Reznichenko <kalessil@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -22,14 +13,23 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-final public class UpdateTranslationsPatcher {
+/*
+ * This file is part of the Yii2 Inspections package.
+ *
+ * Author: Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+final class UpdateTranslationsPatcher {
     final private PsiFile target;
 
     UpdateTranslationsPatcher (@NotNull PsiFile target) {
         this.target = target;
     }
 
-    public boolean patch(@NotNull ConcurrentHashMap<String, ConcurrentHashMap<String, String>> translations) {
+    boolean patch(@NotNull ConcurrentHashMap<String, ConcurrentHashMap<String, String>> translations) {
         /* drop the file if the category not used at all */
         final String category = this.target.getName().replaceAll("\\.php$", "");
         if (!translations.containsKey(category)) {
