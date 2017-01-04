@@ -11,11 +11,40 @@ package com.kalessil.phpStorm.yii2inspections.actors;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiDirectoryContainer;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 
 final public class UpdateTranslationsActor extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent event) {
-        /* TODO: implement */
+        /* consume event */
+        final PsiElement target = CommonDataKeys.PSI_ELEMENT.getData(event.getDataContext());
+        if (null == target) {
+            return;
+        }
+
+        /* determine the action target */
+        PsiFile file           = null;
+        PsiDirectory directory = null;
+        if (target instanceof PsiDirectoryContainer) {
+            directory = ((PsiDirectoryContainer) target).getDirectories()[0];
+        } else if (target instanceof PsiDirectory) {
+            directory = (PsiDirectory )target;
+        } else {
+            file = target.getContainingFile();
+            if (file != null) {
+                directory = file.getContainingDirectory();
+            }
+        }
+        if (null == file && null == directory) {
+            return;
+        }
+
+
     }
 
     @Override
