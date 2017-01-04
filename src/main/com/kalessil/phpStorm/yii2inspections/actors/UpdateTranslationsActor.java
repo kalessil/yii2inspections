@@ -47,6 +47,7 @@ final public class UpdateTranslationsActor extends AnAction {
             }
         }
         if (null == file && null == directory) {
+            // TODO: final VirtualFile[] files = (VirtualFile[]) CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(event.getDataContext());
             return;
         }
 
