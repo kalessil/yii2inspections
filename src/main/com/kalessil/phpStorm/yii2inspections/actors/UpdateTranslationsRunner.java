@@ -45,7 +45,7 @@ class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
         return () -> {
             if (null == discovered) {
                 discovered = new ConcurrentHashMap<>();
-                Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Find used translations", NotificationType.INFORMATION));
+Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Find used translations", NotificationType.INFORMATION));
 
                 /* filter out PHP-files for searching t-calls before invoking any threads */
                 final List<PsiFile> phpFiles = new ArrayList<>();
@@ -54,7 +54,7 @@ class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
                         phpFiles.add(file);
                     }
                 }
-                Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Files in project " + phpFiles.size(), NotificationType.INFORMATION));
+Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Files in project " + phpFiles.size(), NotificationType.INFORMATION));
                 if (0 == phpFiles.size()) {
                     discoveringFinished = true;
                     return;
@@ -73,10 +73,10 @@ class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
                 /* wait for all threads to finish */
                 try {
                     while (scanners.activeCount() > 0) {
-                        wait(300);
+                        wait(100);
                     }
                 } catch (InterruptedException interrupted) {
-                    Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Interrupted", NotificationType.ERROR));
+Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Scan interrupted", NotificationType.ERROR));
                 }
                 discoveringFinished = true;
 
@@ -85,9 +85,16 @@ class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
                 for (ConcurrentHashMap<String, String> categoryTranslations : this.discovered.values()) {
                     hits += categoryTranslations.size();
                 }
-                Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Scanning finished: found t-usages " + hits, NotificationType.INFORMATION));
+Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Scanning finished: found t-usages " + hits, NotificationType.INFORMATION));
             }
 
+            try {
+                while (!discoveringFinished) {
+                    wait(100);
+                }
+            } catch (InterruptedException interrupted) {
+Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Update interrupted", NotificationType.ERROR));
+            }
             /* TODO: fix requested file but wait for discoveringFinished being true */
         };
     }
