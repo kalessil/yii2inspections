@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.yii2inspections.actors;
+package com.kalessil.phpStorm.yii2inspections.actors.upadateTranslations;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
@@ -26,28 +26,28 @@ final public class ProjectFilesFinder implements Iterator {
     ProjectFilesFinder(@NotNull Project project) {
         PsiDirectory root = PsiManager.getInstance(project).findDirectory(project.getBaseDir());
         if (null != root) {
-            Collections.addAll(items, root.getFiles());
-            Collections.addAll(items, root.getSubdirectories());
+            Collections.addAll(this.items, root.getFiles());
+            Collections.addAll(this.items, root.getSubdirectories());
         }
     }
 
     @Override
     public boolean hasNext() {
-        while (items.size() > 0 && !(items.getFirst() instanceof PsiFile)) {
-            PsiFileSystemItem first = items.pollFirst();
+        while (this.items.size() > 0 && !(this.items.getFirst() instanceof PsiFile)) {
+            PsiFileSystemItem first = this.items.pollFirst();
             if (first instanceof PsiDirectory) {
                 for (PsiFile file: ((PsiDirectory) first).getFiles()) {
-                    items.add(0, file);
+                    this.items.add(0, file);
                 }
-                Collections.addAll(items, ((PsiDirectory) first).getSubdirectories());
+                Collections.addAll(this.items, ((PsiDirectory) first).getSubdirectories());
             }
         }
 
-        return items.size() > 0;
+        return this.items.size() > 0;
     }
 
     @Override
     public PsiFileSystemItem next() {
-        return items.pollFirst();
+        return this.items.pollFirst();
     }
 }

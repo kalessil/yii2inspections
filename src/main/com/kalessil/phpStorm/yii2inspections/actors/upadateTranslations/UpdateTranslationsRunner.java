@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.yii2inspections.actors;
+package com.kalessil.phpStorm.yii2inspections.actors.upadateTranslations;
 
 import com.intellij.codeInsight.actions.AbstractLayoutCodeProcessor;
 import com.intellij.notification.Notification;
@@ -25,7 +25,7 @@ import java.util.concurrent.FutureTask;
  * file that was distributed with this source code.
  */
 
-final class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
+final public class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
     @Nullable
     private ConcurrentHashMap<String, ConcurrentHashMap<String, String>> discovered = null;
     private boolean discoveringFinished = false;
@@ -39,7 +39,7 @@ final class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
     }
 
     @Nullable
-    private Runnable createRunner(@NotNull Project project) {
+    private Runnable createRunner(@NotNull Project project, @NotNull PsiFile file) {
         /* we might already collect translations or project is not valid */
         final PsiDirectory root = PsiManager.getInstance(project).findDirectory(project.getBaseDir());
         if (null == root) {
@@ -47,8 +47,8 @@ final class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
         }
 
         return () -> {
-            if (null == discovered) {
-                discovered = new ConcurrentHashMap<>();
+            if (null == this.discovered) {
+                this.discovered = new ConcurrentHashMap<>();
 
                 /* iterate files and run individual scanned withing scanners group */
                 final ThreadGroup scanners     = new ThreadGroup("Find t-methods invocations");
@@ -60,7 +60,7 @@ final class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
                     }
 
                     final Thread runnerThread = new Thread(scanners,
-                            () -> new ProjectTranslationCallsFinder(theAssignedFile).find(discovered));
+                            () -> new ProjectTranslationCallsFinder(theAssignedFile).find(this.discovered));
                     runnerThread.run();
                 }
 
@@ -82,15 +82,18 @@ Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections"
             } catch (InterruptedException interrupted) {
 Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Update interrupted", NotificationType.ERROR));
             }
-            /* TODO: fix requested file but wait for discoveringFinished being true */
+
+            if (new UpdateTranslationsPatcher(file).patch(this.discovered)) {
+Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Needs check: " + file.getVirtualFile().getCanonicalPath(), NotificationType.INFORMATION));
+            }
         };
     }
 
     @NotNull
     @Override
-    protected FutureTask<Boolean> prepareTask(@NotNull PsiFile psiFile, boolean b) throws IncorrectOperationException {
+    protected FutureTask<Boolean> prepareTask(@NotNull PsiFile file, boolean b) throws IncorrectOperationException {
         Runnable defaultRunner = EmptyRunnable.getInstance();
-        Runnable runner        = this.createRunner(psiFile.getProject());
+        Runnable runner        = this.createRunner(file.getProject(), file);
 
         return new FutureTask(null == runner ? defaultRunner : runner, true);
     }

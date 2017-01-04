@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.yii2inspections.actors;
+package com.kalessil.phpStorm.yii2inspections.actors.upadateTranslations;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
