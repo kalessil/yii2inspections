@@ -50,11 +50,9 @@ final public class UpdateTranslationsActor extends AnAction {
             return;
         }
 
-//        String group = "Yii2 Inspections";
-//        Notification fdebug = new Notification(group, group, null == file ? "?" : file.getVirtualFile().getCanonicalPath(), NotificationType.INFORMATION);
-//        Notifications.Bus.notify(fdebug);
-//        Notification ddebug = new Notification(group, group, null == directory ? "?" : directory.getVirtualFile().getCanonicalPath(), NotificationType.INFORMATION);
-//        Notifications.Bus.notify(ddebug);
+        /* run scan-update process in background */
+        new UpdateTranslationsRunner(project).run();
+        Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Started updating translations", NotificationType.INFORMATION));
     }
 
     @Override

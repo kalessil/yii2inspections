@@ -86,20 +86,15 @@ class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
                     try {
                         scanners.wait();
                     } catch (InterruptedException interrupted) {
-                        String group = "Yii2 Inspections";
-                        Notification count = new Notification(group, group, "Interrupted", NotificationType.ERROR);
-                        Notifications.Bus.notify(count);
-
+                        Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Interrupted", NotificationType.ERROR));
                     }
 
                     /* report count - for debug purposes */
-                    String group = "Yii2 Inspections";
                     int hits = 0;
                     for (Integer count : counts.values()) {
                         hits += count;
                     }
-                    Notification count = new Notification(group, group, "Hits: " + hits, NotificationType.INFORMATION);
-                    Notifications.Bus.notify(count);
+                    Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Scanning finished: found t-usages " + hits, NotificationType.INFORMATION));
                 };
             }
         }
