@@ -15,17 +15,21 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiDirectoryContainer;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.*;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.psi.elements.MethodReference;
+
+import java.util.Collection;
 
 final public class UpdateTranslationsActor extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent event) {
         /* consume event */
+        final Project   project = event.getProject();
         final PsiElement target = CommonDataKeys.PSI_ELEMENT.getData(event.getDataContext());
-        if (null == target) {
+        if (null == project || null == target) {
             return;
         }
 
@@ -44,6 +48,26 @@ final public class UpdateTranslationsActor extends AnAction {
         }
         if (null == file && null == directory) {
             return;
+        }
+
+        // PsiManager.getInstance(project).findFile();
+        // final VirtualFile[] files = (VirtualFile[]) CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(event.getDataContext());
+        final PsiDirectory root = PsiManager.getInstance(project).findDirectory(project.getBaseDir());
+        if (null != root) {
+            int hits = 0;
+
+            Collection<MethodReference> calls = PsiTreeUtil.findChildrenOfType(root, MethodReference.class);
+            for (MethodReference call : calls) {
+                final String methodName = call.getName();
+                if (null != methodName && methodName.equals("t")) {
+                    ++hits;
+                }
+            }
+            calls.clear();
+
+//            String group = "Yii2 Inspections";
+//            Notification count = new Notification(group, group, "Hits: " + hits, NotificationType.INFORMATION);
+//            Notifications.Bus.notify(count);
         }
 
 //        String group = "Yii2 Inspections";
