@@ -50,14 +50,13 @@ final public class UpdateTranslationsActor extends AnAction {
             return;
         }
 
-        /* run scan-update process in background, ensure only php-files being processed */
+        /* run scan-update process in background, ensure only target translation files being processed */
         UpdateTranslationsRunner process = null == file ? new UpdateTranslationsRunner(project, directory, true) : new UpdateTranslationsRunner(project, file);
-//        process.addFileFilter(virtualFile -> {
-//            final String path = virtualFile.getCanonicalPath();
-//            return null != path && path.matches("\\\\(translations|messages)\\\\[a-z]{2}\\\\[^\\\\]+\\.php");
-//        });
+        process.addFileFilter(virtualFile -> {
+            final String path = virtualFile.getCanonicalPath();
+            return null != path && path.matches(".*/(translations|messages)/[a-zA-z]{2}/[^/]+\\.php");
+        });
         process.run();
-        Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Started updating translations", NotificationType.INFORMATION));
     }
 
     @Override
