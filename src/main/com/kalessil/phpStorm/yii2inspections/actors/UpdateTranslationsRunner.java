@@ -16,6 +16,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.FutureTask;
 
+/*
+ * This file is part of the Yii2 Inspections package.
+ *
+ * Author: Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 final class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
     /* category =>  [ message-message, ... ] */
     @Nullable
@@ -41,7 +50,6 @@ final class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
         return () -> {
             if (null == discovered) {
                 discovered = new ConcurrentHashMap<>();
-Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Find used translations", NotificationType.INFORMATION));
 
                 /* iterate files and run individual scanned withing scanners group */
                 final ThreadGroup scanners     = new ThreadGroup("Find t-methods invocations");
@@ -67,13 +75,6 @@ Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections"
 Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Scan interrupted", NotificationType.ERROR));
                 }
                 discoveringFinished = true;
-
-                /* report count - for debug purposes */
-                int hits = 0;
-                for (ConcurrentHashMap<String, String> categoryTranslations : this.discovered.values()) {
-                    hits += categoryTranslations.size();
-                }
-Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Scanning finished: found t-usages " + hits, NotificationType.INFORMATION));
             }
 
             try {
@@ -90,8 +91,6 @@ Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections"
     @NotNull
     @Override
     protected FutureTask<Boolean> prepareTask(@NotNull PsiFile psiFile, boolean b) throws IncorrectOperationException {
-Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Processing " + psiFile.getName(), NotificationType.INFORMATION));
-
         Runnable defaultRunner = EmptyRunnable.getInstance();
         Runnable runner        = this.createRunner(psiFile.getProject());
 

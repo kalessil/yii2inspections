@@ -1,14 +1,5 @@
 package com.kalessil.phpStorm.yii2inspections.actors;
 
-/*
- * This file is part of the Yii2 Inspections package.
- *
- * Author: Vladimir Reznichenko <kalessil@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
@@ -19,6 +10,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
+
+/*
+ * This file is part of the Yii2 Inspections package.
+ *
+ * Author: Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 final public class ProjectFilesFinder implements Iterator {
     private LinkedList<PsiFileSystemItem> items = new LinkedList<>();

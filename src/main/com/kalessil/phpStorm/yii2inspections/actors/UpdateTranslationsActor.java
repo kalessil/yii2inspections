@@ -1,14 +1,5 @@
 package com.kalessil.phpStorm.yii2inspections.actors;
 
-/*
- * This file is part of the Yii2 Inspections package.
- *
- * Author: Vladimir Reznichenko <kalessil@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -17,6 +8,15 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiDirectoryContainer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+
+/*
+ * This file is part of the Yii2 Inspections package.
+ *
+ * Author: Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 final public class UpdateTranslationsActor extends AnAction {
     @Override
