@@ -16,7 +16,7 @@ import javax.swing.*;
  * file that was distributed with this source code.
  */
 
-public class Yii2InspectionsProjectConfig implements Configurable {
+final public class Yii2InspectionsProjectConfig implements Configurable {
     private final Project project;
     private final Yii2InspectionsProjectConfigPanel panel;
 

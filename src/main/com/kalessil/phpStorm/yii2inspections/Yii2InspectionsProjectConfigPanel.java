@@ -15,7 +15,7 @@ import java.awt.*;
  * file that was distributed with this source code.
  */
 
-public class Yii2InspectionsProjectConfigPanel extends JPanel {
+final public class Yii2InspectionsProjectConfigPanel extends JPanel {
     public Yii2InspectionsProjectConfigPanel(@NotNull final Project project) {
         super(new BorderLayout());
 
