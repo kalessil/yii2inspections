@@ -50,26 +50,6 @@ final public class UpdateTranslationsActor extends AnAction {
             return;
         }
 
-        // PsiManager.getInstance(project).findFile();
-        // final VirtualFile[] files = (VirtualFile[]) CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(event.getDataContext());
-        final PsiDirectory root = PsiManager.getInstance(project).findDirectory(project.getBaseDir());
-        if (null != root) {
-            int hits = 0;
-
-            Collection<MethodReference> calls = PsiTreeUtil.findChildrenOfType(root, MethodReference.class);
-            for (MethodReference call : calls) {
-                final String methodName = call.getName();
-                if (null != methodName && methodName.equals("t")) {
-                    ++hits;
-                }
-            }
-            calls.clear();
-
-//            String group = "Yii2 Inspections";
-//            Notification count = new Notification(group, group, "Hits: " + hits, NotificationType.INFORMATION);
-//            Notifications.Bus.notify(count);
-        }
-
 //        String group = "Yii2 Inspections";
 //        Notification fdebug = new Notification(group, group, null == file ? "?" : file.getVirtualFile().getCanonicalPath(), NotificationType.INFORMATION);
 //        Notifications.Bus.notify(fdebug);
