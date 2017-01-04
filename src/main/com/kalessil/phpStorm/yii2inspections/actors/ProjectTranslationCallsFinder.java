@@ -10,10 +10,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class UsedTranslationsFinder {
+final public class ProjectTranslationCallsFinder {
     final private PsiFile file;
 
-    UsedTranslationsFinder(@NotNull PsiFile file) {
+    ProjectTranslationCallsFinder(@NotNull PsiFile file) {
         this.file = file;
     }
 

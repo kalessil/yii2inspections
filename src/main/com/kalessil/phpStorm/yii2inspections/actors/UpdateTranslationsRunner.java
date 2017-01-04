@@ -9,18 +9,14 @@ import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
-import com.jetbrains.php.lang.psi.PhpFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.FutureTask;
 
-class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
+final class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
     /* category =>  [ message-message, ... ] */
     @Nullable
     ConcurrentHashMap<String, ConcurrentHashMap<String, String>> discovered = null;
@@ -47,25 +43,17 @@ class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
                 discovered = new ConcurrentHashMap<>();
 Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Find used translations", NotificationType.INFORMATION));
 
-                /* filter out PHP-files for searching t-calls before invoking any threads */
-                final List<PsiFile> phpFiles = new ArrayList<>();
-                for (PsiFile file : PsiTreeUtil.findChildrenOfType(root, PsiFile.class)) {
-                    if (file instanceof PhpFile) {
-                        phpFiles.add(file);
-                    }
-                }
-Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Files in project " + phpFiles.size(), NotificationType.INFORMATION));
-                if (0 == phpFiles.size()) {
-                    discoveringFinished = true;
-                    return;
-                }
-
                 /* iterate files and run individual scanned withing scanners group */
-                final ThreadGroup scanners = new ThreadGroup("Find t-methods invocations");
-                for (PsiFile file : phpFiles) {
-                    final PsiFile theAssignedFile = file;
-                    final Thread runnerThread  = new Thread(scanners, () -> {
-                        new UsedTranslationsFinder(theAssignedFile).find(discovered);
+                final ThreadGroup scanners     = new ThreadGroup("Find t-methods invocations");
+                final ProjectFilesFinder files = new ProjectFilesFinder(project);
+                while (files.hasNext()) {
+                    final PsiFile theAssignedFile = (PsiFile) files.next();
+                    if (!theAssignedFile.getName().endsWith(".php")) {
+                        continue;
+                    }
+
+                    final Thread runnerThread = new Thread(scanners, () -> {
+                        new ProjectTranslationCallsFinder(theAssignedFile).find(discovered);
                     });
                     runnerThread.run();
                 }
