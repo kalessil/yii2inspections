@@ -9,10 +9,12 @@ package com.kalessil.phpStorm.yii2inspections.actors;
  * file that was distributed with this source code.
  */
 
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiDirectoryContainer;
 import com.intellij.psi.PsiElement;
@@ -44,7 +46,11 @@ final public class UpdateTranslationsActor extends AnAction {
             return;
         }
 
-
+//        String group = "Yii2 Inspections";
+//        Notification fdebug = new Notification(group, group, null == file ? "?" : file.getVirtualFile().getCanonicalPath(), NotificationType.INFORMATION);
+//        Notifications.Bus.notify(fdebug);
+//        Notification ddebug = new Notification(group, group, null == directory ? "?" : directory.getVirtualFile().getCanonicalPath(), NotificationType.INFORMATION);
+//        Notifications.Bus.notify(ddebug);
     }
 
     @Override
