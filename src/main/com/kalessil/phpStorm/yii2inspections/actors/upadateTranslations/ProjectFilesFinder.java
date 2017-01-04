@@ -34,7 +34,7 @@ final public class ProjectFilesFinder implements Iterator {
     @Override
     public boolean hasNext() {
         while (this.items.size() > 0 && !(this.items.getFirst() instanceof PsiFile)) {
-            PsiFileSystemItem first = this.items.pollFirst();
+            final PsiFileSystemItem first = this.items.pollFirst();
             if (first instanceof PsiDirectory) {
                 for (PsiFile file: ((PsiDirectory) first).getFiles()) {
                     this.items.add(0, file);
