@@ -61,23 +61,20 @@ class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
                         /* tweak scope with variable we want to be accessible for threads */
                         final PsiFile assignedFile = file;
                         final int threadId         = threads.size();
-                        final Thread runnerThread = new Thread(scanners, new Runnable() {
-                            @Override
-                            public void run() {
-                                counts.put(threadId, 0);
+                        final Thread runnerThread = new Thread(scanners, () -> {
+                            counts.put(threadId, 0);
 
-                                Collection<MethodReference> calls = PsiTreeUtil.findChildrenOfType(assignedFile, MethodReference.class);
-                                for (MethodReference call : calls) {
-                                    final PsiElement[] params = call.getParameters();
-                                    final String methodName   = call.getName();
-                                    if (null == methodName || params.length < 2 || !methodName.equals("t")) {
-                                        continue;
-                                    }
-
-                                    counts.put(threadId, 1 + counts.get(threadId));
+                            Collection<MethodReference> calls = PsiTreeUtil.findChildrenOfType(assignedFile, MethodReference.class);
+                            for (MethodReference call : calls) {
+                                final PsiElement[] params = call.getParameters();
+                                final String methodName   = call.getName();
+                                if (null == methodName || params.length < 2 || !methodName.equals("t")) {
+                                    continue;
                                 }
-                                calls.clear();
+
+                                counts.put(threadId, 1 + counts.get(threadId));
                             }
+                            calls.clear();
                         });
 
                         /* join the group and run in background */
