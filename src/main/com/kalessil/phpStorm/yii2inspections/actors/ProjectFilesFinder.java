@@ -21,7 +21,7 @@ import java.util.LinkedList;
  */
 
 final public class ProjectFilesFinder implements Iterator {
-    private LinkedList<PsiFileSystemItem> items = new LinkedList<>();
+    private final LinkedList<PsiFileSystemItem> items = new LinkedList<>();
 
     ProjectFilesFinder(@NotNull Project project) {
         PsiDirectory root = PsiManager.getInstance(project).findDirectory(project.getBaseDir());

@@ -37,8 +37,8 @@ final public class InheritanceChainExtractUtil {
         processed.add(clazz);
 
         /* re-delegate interface handling */
-        for (PhpClass iface : clazz.getImplementedInterfaces()) {
-            processInterface(iface, processed);
+        for (PhpClass anInterface : clazz.getImplementedInterfaces()) {
+            processInterface(anInterface, processed);
         }
 
         /* handle parent class */

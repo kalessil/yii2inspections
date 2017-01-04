@@ -26,7 +26,7 @@ final public class Yii2InspectionsProjectConfig implements Configurable {
 
     public Yii2InspectionsProjectConfig(@NotNull Project project, @NotNull Yii2InspectionsProjectConfigPanel panel) {
         this.project = project;
-        this.panel = panel;
+        this.panel   = panel;
     }
 
     public String getDisplayName() {

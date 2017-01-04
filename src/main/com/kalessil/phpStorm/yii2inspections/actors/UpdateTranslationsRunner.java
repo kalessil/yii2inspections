@@ -26,9 +26,8 @@ import java.util.concurrent.FutureTask;
  */
 
 final class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
-    /* category =>  [ message-message, ... ] */
     @Nullable
-    ConcurrentHashMap<String, ConcurrentHashMap<String, String>> discovered = null;
+    private ConcurrentHashMap<String, ConcurrentHashMap<String, String>> discovered = null;
     private boolean discoveringFinished = false;
 
     public UpdateTranslationsRunner(Project project, PsiDirectory directory, boolean b) {
@@ -60,9 +59,8 @@ final class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
                         continue;
                     }
 
-                    final Thread runnerThread = new Thread(scanners, () -> {
-                        new ProjectTranslationCallsFinder(theAssignedFile).find(discovered);
-                    });
+                    final Thread runnerThread = new Thread(scanners,
+                            () -> new ProjectTranslationCallsFinder(theAssignedFile).find(discovered));
                     runnerThread.run();
                 }
 
