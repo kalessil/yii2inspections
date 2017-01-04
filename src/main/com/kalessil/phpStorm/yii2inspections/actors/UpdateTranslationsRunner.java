@@ -42,58 +42,69 @@ class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
         if (null != root) {
             final PsiFile[] files = root.getFiles();
 
-            final List<Runnable> threads                     = new ArrayList<>();
-            final ThreadGroup scanners                       = new ThreadGroup("Find t-methods invocation");
-            final ConcurrentHashMap<Integer, Integer> counts = new ConcurrentHashMap<>();
-
+            /* filter out PHP-files before invoking any threads */
+            final List<PsiFile> phpFiles = new ArrayList<>();
             for (PsiFile file : files) {
-                if (!file.getName().endsWith(".php")) {
-                    continue;
+                if (file.getName().endsWith(".php")) {
+                    phpFiles.add(file);
                 }
+            }
 
-                /* tweak scope with variable we want to be accessible for threads */
-                final PsiFile assignedFile = file;
-                final int threadId         = threads.size();
-                final Thread runnerThread = new Thread(scanners, new Runnable() {
-                    @Override
-                    public void run() {
-                        counts.put(threadId, 0);
+            /* override future runnable with real work when needed */
+            if (phpFiles.size() > 0) {
+                runner = () -> {
+                    final List<Runnable> threads                     = new ArrayList<>();
+                    final ThreadGroup scanners                       = new ThreadGroup("Find t-methods invocation");
+                    final ConcurrentHashMap<Integer, Integer> counts = new ConcurrentHashMap<>();
 
-                        Collection<MethodReference> calls = PsiTreeUtil.findChildrenOfType(assignedFile, MethodReference.class);
-                        for (MethodReference call : calls) {
-                            final PsiElement[] params = call.getParameters();
-                            final String methodName   = call.getName();
-                            if (null == methodName || params.length < 2 || !methodName.equals("t")) {
-                                continue;
+                    for (PsiFile file : phpFiles) {
+                        /* tweak scope with variable we want to be accessible for threads */
+                        final PsiFile assignedFile = file;
+                        final int threadId         = threads.size();
+                        final Thread runnerThread = new Thread(scanners, new Runnable() {
+                            @Override
+                            public void run() {
+                                counts.put(threadId, 0);
+
+                                Collection<MethodReference> calls = PsiTreeUtil.findChildrenOfType(assignedFile, MethodReference.class);
+                                for (MethodReference call : calls) {
+                                    final PsiElement[] params = call.getParameters();
+                                    final String methodName   = call.getName();
+                                    if (null == methodName || params.length < 2 || !methodName.equals("t")) {
+                                        continue;
+                                    }
+
+                                    counts.put(threadId, 1 + counts.get(threadId));
+                                }
+                                calls.clear();
                             }
+                        });
 
-                            counts.put(threadId, 1 + counts.get(threadId));
-                        }
-                        calls.clear();
+                        /* join the group and run in background */
+                        threads.add(runnerThread);
+                        runnerThread.run();
                     }
-                });
 
-                /* join the group and run in background */
-                threads.add(runnerThread);
-                runnerThread.run();
+                    /* wait for all threads */
+                    try {
+                        scanners.wait();
+                    } catch (InterruptedException interrupted) {
+                        String group = "Yii2 Inspections";
+                        Notification count = new Notification(group, group, "Interrupted", NotificationType.ERROR);
+                        Notifications.Bus.notify(count);
+
+                    }
+
+                    /* report count - for debug purposes */
+                    String group = "Yii2 Inspections";
+                    int hits = 0;
+                    for (Integer count : counts.values()) {
+                        hits += count;
+                    }
+                    Notification count = new Notification(group, group, "Hits: " + hits, NotificationType.INFORMATION);
+                    Notifications.Bus.notify(count);
+                };
             }
-
-            try {
-                scanners.wait();
-            } catch (InterruptedException interrupted) {
-                String group = "Yii2 Inspections";
-                Notification count = new Notification(group, group, "Interrupted", NotificationType.ERROR);
-                Notifications.Bus.notify(count);
-
-            }
-
-            String group = "Yii2 Inspections";
-            int hits = 0;
-            for (Integer count : counts.values()) {
-                hits += count;
-            }
-            Notification count = new Notification(group, group, "Hits: " + hits, NotificationType.INFORMATION);
-            Notifications.Bus.notify(count);
         }
 
         return new FutureTask(runner, true);
