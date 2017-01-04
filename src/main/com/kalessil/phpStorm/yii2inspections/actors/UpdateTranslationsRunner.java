@@ -14,6 +14,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
+import org.apache.commons.lang.time.StopWatch;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -49,6 +50,8 @@ class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
         final Project project   = psiFile.getProject();
         final PsiDirectory root = PsiManager.getInstance(project).findDirectory(project.getBaseDir());
         if (null != root) {
+            StopWatch timer = new StopWatch(); timer.start();
+
             final Collection<PsiFile> foundFiles = PsiTreeUtil.findChildrenOfType(root, PsiFile.class);
 
             /* filter out PHP-files before invoking any threads */
@@ -59,11 +62,16 @@ class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
                 }
             }
             foundFiles.clear();
+
             Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Files in project " + phpFiles.size(), NotificationType.INFORMATION));
+            timer.stop();
+            Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Files search time " + timer.toString(), NotificationType.INFORMATION));
 
             /* override future runnable with real work when needed */
             if (phpFiles.size() > 0) {
                 runner = () -> {
+                    StopWatch innerTimer = new StopWatch(); innerTimer.start();
+
                     final List<Runnable> threads                     = new ArrayList<>();
                     final ThreadGroup scanners                       = new ThreadGroup("Find t-methods invocation");
                     final ConcurrentHashMap<Integer, Integer> counts = new ConcurrentHashMap<>();
@@ -96,10 +104,13 @@ class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
                     /* wait for all threads */
                     Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Waiting, threads: " + threads.size(), NotificationType.INFORMATION));
                     try {
-                        scanners.wait();
+                        while (scanners.activeCount() > 0) {
+                            wait(100);
+                        }
                     } catch (InterruptedException interrupted) {
                         Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Interrupted", NotificationType.ERROR));
                     }
+                    Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Threads time " + innerTimer.toString(), NotificationType.INFORMATION));
 
                     /* report count - for debug purposes */
                     int hits = 0;
