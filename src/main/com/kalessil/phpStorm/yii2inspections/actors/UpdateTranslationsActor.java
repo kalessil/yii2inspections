@@ -16,6 +16,8 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiDirectoryContainer;
 import com.intellij.psi.PsiElement;
@@ -48,8 +50,13 @@ final public class UpdateTranslationsActor extends AnAction {
             return;
         }
 
-        /* run scan-update process in background */
-        new UpdateTranslationsRunner(project).run();
+        /* run scan-update process in background, ensure only php-files being processed */
+        UpdateTranslationsRunner process = null == file ? new UpdateTranslationsRunner(project, directory, true) : new UpdateTranslationsRunner(project, file);
+//        process.addFileFilter(virtualFile -> {
+//            final String path = virtualFile.getCanonicalPath();
+//            return null != path && path.matches("\\\\(translations|messages)\\\\[a-z]{2}\\\\[^\\\\]+\\.php");
+//        });
+        process.run();
         Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Started updating translations", NotificationType.INFORMATION));
     }
 

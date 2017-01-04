@@ -12,6 +12,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,13 +23,23 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.FutureTask;
 
 class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
-    public UpdateTranslationsRunner(Project project) {
-        super(project, "Update Yii2 translations", "Updating Yii2 translations", false);
+//    public UpdateTranslationsRunner(Project project) {
+//        super(project, "Update Yii2 translations", "Updating Yii2 translations", false);
+//    }
+
+    public UpdateTranslationsRunner(Project project, PsiDirectory directory, boolean b) {
+        super(project, directory, b, "Updating Yii2 translations", "Update Yii2 translations", false);
+    }
+
+    public UpdateTranslationsRunner(Project project, PsiFile file) {
+        super(project, file, "Updating Yii2 translations", "Update Yii2 translations", false);
     }
 
     @NotNull
     @Override
     protected FutureTask<Boolean> prepareTask(@NotNull PsiFile psiFile, boolean b) throws IncorrectOperationException {
+        Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Processing " + psiFile.getName(), NotificationType.INFORMATION));
+
         Runnable runner = EmptyRunnable.getInstance();
 
         // PsiManager.getInstance(project).findFile();
@@ -38,15 +49,17 @@ class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
         final Project project   = psiFile.getProject();
         final PsiDirectory root = PsiManager.getInstance(project).findDirectory(project.getBaseDir());
         if (null != root) {
-            final PsiFile[] files = root.getFiles();
+            final Collection<PsiFile> foundFiles = PsiTreeUtil.findChildrenOfType(root, PsiFile.class);
 
             /* filter out PHP-files before invoking any threads */
             final List<PsiFile> phpFiles = new ArrayList<>();
-            for (PsiFile file : files) {
+            for (PsiFile file : foundFiles) {
                 if (file.getName().endsWith(".php")) {
                     phpFiles.add(file);
                 }
             }
+            foundFiles.clear();
+            Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Files in project " + phpFiles.size(), NotificationType.INFORMATION));
 
             /* override future runnable with real work when needed */
             if (phpFiles.size() > 0) {
@@ -81,6 +94,7 @@ class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
                     }
 
                     /* wait for all threads */
+                    Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Waiting, threads: " + threads.size(), NotificationType.INFORMATION));
                     try {
                         scanners.wait();
                     } catch (InterruptedException interrupted) {
