@@ -47,38 +47,35 @@ final class UpdateTranslationsPatcher {
             final ConcurrentHashMap<String, String> usedCategoryMessages = usages.get(category);
 
             /* find unused */
-            int unusedTranslationsCount = 0;
-            int usedTranslationsCount   = 0;
+            final Set<String> unusedMessages = new HashSet<>();
             for (String message : ownMessages) {
                 if (!usedCategoryMessages.contains(message)) {
-                    ++unusedTranslationsCount;
-                } else {
-                    ++usedTranslationsCount;
+                    unusedMessages.add(message);
                 }
             }
-            if (unusedTranslationsCount > 0) {
+            if (unusedMessages.size() > 0) {
                 final String group   = "Yii2 Inspections";
-                final String message = filePath + ": used " + usedTranslationsCount + " unused " + unusedTranslationsCount;
+                final String message = filePath + ": unused " + unusedMessages.size() + " of " + ownMessages.size();
                 Notifications.Bus.notify(new Notification(group, group, message, NotificationType.INFORMATION), this.file.getProject());
             }
 
             /* find missing: TODO: category should present on one directory only for fixing it */
-            int missingTranslations   = 0;
-            int presentedTranslations = 0;
+            final Set<String> missingMessages = new HashSet<>();
             for (String message : usedCategoryMessages.keySet()) {
                 if (!ownMessages.contains(message)) {
-                    ++missingTranslations;
-                } else {
-                    ++presentedTranslations;
+                    missingMessages.add(message);
                 }
             }
-            if (missingTranslations > 0) {
+            if (missingMessages.size() > 0) {
                 final String group   = "Yii2 Inspections";
-                final String message = filePath + ": presented " + presentedTranslations + " missing " + missingTranslations;
+                final String message = filePath + ": missing " + missingMessages.size() + " of used " + usedCategoryMessages.size();
                 Notifications.Bus.notify(new Notification(group, group, message, NotificationType.INFORMATION), this.file.getProject());
             }
 
-            return missingTranslations > 0 || unusedTranslationsCount > 0;
+            final boolean hasDefects = unusedMessages.size() > 0 || missingMessages.size() > 0;
+            unusedMessages.clear();
+            missingMessages.clear();
+            return hasDefects;
         }
 
         return false;
