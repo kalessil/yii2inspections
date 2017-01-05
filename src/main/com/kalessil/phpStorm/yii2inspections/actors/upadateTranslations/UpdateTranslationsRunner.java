@@ -53,40 +53,7 @@ Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections"
 
         return () -> {
             if (null == this.discovered) {
-                this.discovered = new ConcurrentHashMap<>();
-
-                /* iterate files and run individual scanned withing scanners group */
-                final ThreadGroup scanners     = new ThreadGroup("Find t-methods invocations");
-                final ProjectFilesFinder files = new ProjectFilesFinder(project);
-                while (files.hasNext()) {
-                    final PsiFile theAssignedFile = (PsiFile) files.next();
-                    final String fileName         = theAssignedFile.getName();
-                    final boolean isPhp           = fileName.endsWith(".php");
-                    final boolean isHtml          = fileName.endsWith(".html");
-                    if (!isPhp && !isHtml) {
-                        continue;
-                    }
-
-                    final Thread runnerThread = new Thread(scanners,
-                            () -> {
-                                if (isPhp) {
-                                    new ProjectTranslationPhpCallsFinder(theAssignedFile).find(this.discovered);
-                                    return;
-                                }
-
-                                new ProjectTranslationTwigCallsFinder(theAssignedFile).find(this.discovered);
-                            });
-                    runnerThread.run();
-                }
-
-                /* wait for all threads to finish */
-                try {
-                    while (scanners.activeCount() > 0) {
-                        wait(100);
-                    }
-                } catch (InterruptedException interrupted) {
-Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Scan interrupted", NotificationType.ERROR));
-                }
+                this.discovered = new UsedTranslationsRegistry(project).populate();
                 discoveringFinished = true;
             }
 

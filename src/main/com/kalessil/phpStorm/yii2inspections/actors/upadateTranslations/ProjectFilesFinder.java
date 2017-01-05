@@ -24,7 +24,7 @@ final class ProjectFilesFinder implements Iterator {
     private final LinkedList<PsiFileSystemItem> items = new LinkedList<>();
 
     ProjectFilesFinder(@NotNull Project project) {
-        PsiDirectory root = PsiManager.getInstance(project).findDirectory(project.getBaseDir());
+        final PsiDirectory root = PsiManager.getInstance(project).findDirectory(project.getBaseDir());
         if (null != root) {
             Collections.addAll(this.items, root.getFiles());
             Collections.addAll(this.items, root.getSubdirectories());

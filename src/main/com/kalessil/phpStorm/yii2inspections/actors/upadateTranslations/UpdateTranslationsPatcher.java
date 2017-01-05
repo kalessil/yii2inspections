@@ -54,24 +54,37 @@ final class UpdateTranslationsPatcher {
         }
 
         /* find missing translations */
-        int missingTranslations = 0;
+        int missingTranslations    = 0;
+        int presentedTranslations = 0;
         for (String message : usedTranslations.keySet()) {
             /* TODO: add translation at the end */
+            /* TODO: delayed processing for missing - craft cms can */
             if (!exportedTranslations.contains(message)){
-Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Missing: " + category + "|" + message, NotificationType.INFORMATION));
                 ++missingTranslations;
+            } else {
+                ++presentedTranslations;
             }
         }
+        if (missingTranslations > 0) {
+            final String message = target.getVirtualFile().getCanonicalPath() + ": presented " + presentedTranslations + " missing " + missingTranslations;
+            Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", message, NotificationType.INFORMATION));
+        }
         /* find unused translations */
-        int unusedTranslations = 0;
+        int unusedTranslationsCount = 0;
+        int usedTranslationsCount   = 0;
         for (String message : exportedTranslations) {
             if (!usedTranslations.containsKey(message)) {
-Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Unused: " + category + "|" + message, NotificationType.INFORMATION));
-                ++unusedTranslations;
+                ++unusedTranslationsCount;
+            } else {
+                ++usedTranslationsCount;
             }
             /* TODO: drop the translation */
         }
+        if (unusedTranslationsCount > 0) {
+            final String message = target.getVirtualFile().getCanonicalPath() + ": used " + usedTranslationsCount + " unused " + unusedTranslationsCount;
+            Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", message, NotificationType.INFORMATION));
+        }
 
-        return missingTranslations > 0 || unusedTranslations > 0;
+        return missingTranslations > 0 || unusedTranslationsCount > 0;
     }
 }
