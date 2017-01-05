@@ -10,6 +10,8 @@ import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 /*
  * This file is part of the Yii2 Inspections package.
  *
@@ -18,8 +20,6 @@ import org.jetbrains.annotations.Nullable;
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-import java.util.concurrent.ConcurrentHashMap;
 
 final public class ProvidedTranslationsRegistry {
     @Nullable
