@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.yii2inspections.actors.upadateTranslations;
+package com.kalessil.phpStorm.yii2inspections.actors.upadateTranslations.registry;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;

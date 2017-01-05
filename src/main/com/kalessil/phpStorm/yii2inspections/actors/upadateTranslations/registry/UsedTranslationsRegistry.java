@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.yii2inspections.actors.upadateTranslations;
+package com.kalessil.phpStorm.yii2inspections.actors.upadateTranslations.registry;
 
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * file that was distributed with this source code.
  */
 
-public class UsedTranslationsRegistry {
+final public class UsedTranslationsRegistry {
     @Nullable
     private Project project = null;
 

@@ -1,4 +1,4 @@
-package com.kalessil.phpStorm.yii2inspections.actors.upadateTranslations;
+package com.kalessil.phpStorm.yii2inspections.actors.upadateTranslations.registry;
 
 /*
  * This file is part of the Yii2 Inspections package.
