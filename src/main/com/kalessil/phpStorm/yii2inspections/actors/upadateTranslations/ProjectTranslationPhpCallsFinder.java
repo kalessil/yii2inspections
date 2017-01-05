@@ -36,33 +36,11 @@ final class ProjectTranslationPhpCallsFinder {
                 continue;
             }
 
-            /* resolve the method and identify platform */
-            final PsiElement methodCandidate = call.resolve();
-            if (!(methodCandidate instanceof Method)) {
-                continue;
-            }
-            final String methodFQN = ((Method) methodCandidate).getFQN();
-            final boolean isYii    = methodFQN.equals("\\YiiBase::t");
-            final boolean isCraft  = methodFQN.equals("\\Craft\\Craft::t");
-
             /* sort ot which params are category and message */
             String category               = null;
             String message                = null;
-            PsiElement categoryExpression = null;
-            PsiElement messageExpression  = null;
-            if (isCraft) {
-                // \Craft\Craft::t => $message, $variables, $source, $language, $category = 'craft'
-                if (params.length < 5) {
-                    category = "craft";
-                } else {
-                    categoryExpression = params[4];
-                }
-            }
-            if (isYii) {
-                // \YiiBase::t => $category, $message, ...
-                categoryExpression = params[0];
-                messageExpression  = params[1];
-            }
+            PsiElement categoryExpression = params[0];
+            PsiElement messageExpression  = params[1];
 
             /* TODO: resolve params as string literals */
             /* extract contained texts from message and category literals */

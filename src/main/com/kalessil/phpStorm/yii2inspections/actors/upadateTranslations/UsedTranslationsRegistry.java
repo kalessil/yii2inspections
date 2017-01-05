@@ -39,7 +39,8 @@ public class UsedTranslationsRegistry {
             return null;
         }
 
-        this.translations = new ConcurrentHashMap<>();
+        this.translations       = new ConcurrentHashMap<>();
+        int countProcessedFiles = 0;
 
         ThreadGroup workers      = new ThreadGroup("Find t-methods invocations");
         ProjectFilesFinder files = new ProjectFilesFinder(project);
@@ -67,6 +68,8 @@ public class UsedTranslationsRegistry {
                     new ProjectTranslationTwigCallsFinder(theFile).find(this.translations);
                 });
             runnerThread.run();
+
+            ++countProcessedFiles;
         }
 
         try {
@@ -78,6 +81,16 @@ public class UsedTranslationsRegistry {
             final String message = "Used translations scan has been interrupted";
             Notifications.Bus.notify(new Notification(group, group, message, NotificationType.ERROR));
         }
+
+        /* TODO: remove this debug */
+        int countTranslations = 0;
+        for (ConcurrentHashMap<String, String> translationGroup : this.translations.values()) {
+            countTranslations += translationGroup.size();
+        }
+        final String group   = "Yii2 Inspections";
+        final String message = "Files " + countProcessedFiles + " groups " + this.translations.size() + " messages " + countTranslations;
+        Notifications.Bus.notify(new Notification(group, group, message, NotificationType.INFORMATION));
+
 
         return this.translations;
     }

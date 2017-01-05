@@ -53,6 +53,10 @@ Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections"
 
         return () -> {
             if (null == this.discovered) {
+                /* exclusively do scanning */
+                this.discovered = new ConcurrentHashMap<>();
+
+                /* do scanning itself */
                 this.discovered = new UsedTranslationsRegistry(project).populate();
                 discoveringFinished = true;
             }
@@ -62,11 +66,15 @@ Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections"
                     wait(100);
                 }
             } catch (InterruptedException interrupted) {
-Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Update interrupted", NotificationType.ERROR));
+                final String group   = "Yii2 Inspections";
+                final String message = "Translations update has been interrupted";
+                Notifications.Bus.notify(new Notification(group, group, message, NotificationType.ERROR));
             }
 
             if (new UpdateTranslationsPatcher(file).patch(this.discovered)) {
-Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Needs check: " + file.getVirtualFile().getCanonicalPath(), NotificationType.INFORMATION));
+                final String group   = "Yii2 Inspections";
+                final String message = "Needs check: " + file.getVirtualFile().getCanonicalPath();
+                Notifications.Bus.notify(new Notification(group, group, message, NotificationType.INFORMATION));
             }
         };
     }
