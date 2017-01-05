@@ -10,6 +10,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.IncorrectOperationException;
+import com.kalessil.phpStorm.yii2inspections.actors.upadateTranslations.registry.ProvidedTranslationsRegistry;
 import com.kalessil.phpStorm.yii2inspections.actors.upadateTranslations.registry.UsedTranslationsRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,9 +29,13 @@ import java.util.concurrent.FutureTask;
 
 final public class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor {
     @Nullable
-    private ConcurrentHashMap<String, ConcurrentHashMap<String, String>> discovered = null;
-    private boolean discoveringFinished = false;
-    private boolean startNotified       = false;
+    private ConcurrentHashMap<String, ConcurrentHashMap<String, String>> usedTranslations = null;
+    @Nullable
+    private ConcurrentHashMap<String, ConcurrentHashMap<String, ConcurrentHashMap<PsiFile, PsiFile>>> exportedTranslations = null;
+
+    private boolean usagesDiscovered       = false;
+    private boolean translationsDiscovered = false;
+    private boolean startNotified          = false;
 
     public UpdateTranslationsRunner(Project project, PsiDirectory directory, boolean b) {
         super(project, directory, b, "Updating Yii2 translations", "Update Yii2 translations", false);
@@ -53,17 +58,23 @@ Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections"
         }
 
         return () -> {
-            if (null == this.discovered) {
+            if (null == this.usedTranslations) {
                 /* exclusively do scanning */
-                this.discovered = new ConcurrentHashMap<>();
-
+                this.usedTranslations = new ConcurrentHashMap<>();
                 /* do scanning itself */
-                this.discovered = new UsedTranslationsRegistry(project).populate();
-                discoveringFinished = true;
+                this.usedTranslations = new UsedTranslationsRegistry(project).populate();
+                usagesDiscovered = true;
+            }
+            if (null == this.exportedTranslations) {
+                /* exclusively do scanning */
+                this.exportedTranslations = new ConcurrentHashMap<>();
+                /* do scanning itself */
+                this.exportedTranslations = new ProvidedTranslationsRegistry(project).populate();
+                translationsDiscovered = true;
             }
 
             try {
-                while (!discoveringFinished) {
+                while (!usagesDiscovered || !translationsDiscovered) {
                     wait(100);
                 }
             } catch (InterruptedException interrupted) {
@@ -72,7 +83,7 @@ Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections"
                 Notifications.Bus.notify(new Notification(group, group, message, NotificationType.ERROR));
             }
 
-            if (new UpdateTranslationsPatcher(file).patch(this.discovered)) {
+            if (new UpdateTranslationsPatcher(file).patch(this.usedTranslations)) {
                 final String group   = "Yii2 Inspections";
                 final String message = "Needs check: " + file.getVirtualFile().getCanonicalPath();
                 Notifications.Bus.notify(new Notification(group, group, message, NotificationType.INFORMATION));

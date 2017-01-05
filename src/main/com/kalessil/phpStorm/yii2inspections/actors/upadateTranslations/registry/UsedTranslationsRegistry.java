@@ -28,7 +28,7 @@ final public class UsedTranslationsRegistry {
     @Nullable
     private ConcurrentHashMap<String, ConcurrentHashMap<String, String>> translations = null;
 
-    UsedTranslationsRegistry(@NotNull Project project) {
+    public UsedTranslationsRegistry(@NotNull Project project) {
         this.project = project;
     }
 
@@ -42,8 +42,8 @@ final public class UsedTranslationsRegistry {
         this.translations       = new ConcurrentHashMap<>();
         int countProcessedFiles = 0;
 
-        ThreadGroup workers      = new ThreadGroup("Find t-methods invocations");
-        ProjectFilesFinder files = new ProjectFilesFinder(project);
+        ThreadGroup findTranslateWorkers = new ThreadGroup("Find t-methods invocations");
+        ProjectFilesFinder files         = new ProjectFilesFinder(project);
         while (files.hasNext()) {
             final PsiFile theFile = (PsiFile) files.next();
             final String filePath = theFile.getVirtualFile().getCanonicalPath();
@@ -59,7 +59,7 @@ final public class UsedTranslationsRegistry {
                 continue;
             }
 
-            final Thread runnerThread = new Thread(workers,
+            final Thread runnerThread = new Thread(findTranslateWorkers,
                 () -> {
                     if (isPhp) {
                         new ProjectTranslationPhpCallsFinder(theFile).find(this.translations);
@@ -73,8 +73,8 @@ final public class UsedTranslationsRegistry {
         }
 
         try {
-            while (workers.activeCount() > 0) {
-                wait(50);
+            while (findTranslateWorkers.activeCount() > 0) {
+                wait(100);
             }
         } catch (InterruptedException interrupted) {
             final String group   = "Yii2 Inspections";
@@ -88,9 +88,8 @@ final public class UsedTranslationsRegistry {
             countTranslations += translationGroup.size();
         }
         final String group   = "Yii2 Inspections";
-        final String message = "Files " + countProcessedFiles + " groups " + this.translations.size() + " messages " + countTranslations;
+        final String message = "Usages: files " + countProcessedFiles + " groups " + this.translations.size() + " messages " + countTranslations;
         Notifications.Bus.notify(new Notification(group, group, message, NotificationType.INFORMATION));
-
 
         return this.translations;
     }

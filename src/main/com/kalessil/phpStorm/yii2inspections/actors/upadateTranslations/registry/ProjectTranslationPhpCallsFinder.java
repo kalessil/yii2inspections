@@ -35,7 +35,6 @@ final class ProjectTranslationPhpCallsFinder {
                 continue;
             }
 
-            /* sort ot which params are category and message */
             String category               = null;
             String message                = null;
             PsiElement categoryExpression = params[0];
@@ -55,16 +54,14 @@ final class ProjectTranslationPhpCallsFinder {
                     message = messageLiteral.getContents();
                 }
             }
-            if (null == category || null == message) {
-                continue;
-            }
 
-            /* create category translations holder if needed and store the message */
-            if (!storage.containsKey(category)) {
-                storage.putIfAbsent(category, new ConcurrentHashMap<>());
+            /* register the category translation message */
+            if (null != category && null != message) {
+                if (!storage.containsKey(category)) {
+                    storage.putIfAbsent(category, new ConcurrentHashMap<>());
+                }
+                storage.get(category).putIfAbsent(message, message);
             }
-            final ConcurrentHashMap<String, String> translationsHolder = storage.get(category);
-            translationsHolder.putIfAbsent(message, message);
         }
         calls.clear();
     }
