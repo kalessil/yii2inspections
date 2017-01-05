@@ -54,25 +54,27 @@ final public class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor 
         }
         if (!this.startNotified) {
             this.startNotified = true;
-Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Scanning for used translations", NotificationType.INFORMATION));
+
+            final String group   = "Yii2 Inspections";
+            final String message = "Scanning for used translations";
+            Notifications.Bus.notify(new Notification(group, group, message, NotificationType.INFORMATION), project);
         }
 
         return () -> {
+            /* The 1st thread will stuck here */
             if (null == this.usedTranslations) {
-                /* exclusively do scanning */
-                this.usedTranslations = new ConcurrentHashMap<>();
-                /* do scanning itself */
+                this.usedTranslations = new ConcurrentHashMap<>();  // obtain the work exclusively
                 this.usedTranslations = new UsedTranslationsRegistry(project).populate();
                 usagesDiscovered = true;
             }
+            /* The 2nd thread will stuck here */
             if (null == this.exportedTranslations) {
-                /* exclusively do scanning */
-                this.exportedTranslations = new ConcurrentHashMap<>();
-                /* do scanning itself */
+                this.exportedTranslations = new ConcurrentHashMap<>(); // obtain the work exclusively
                 this.exportedTranslations = new ProvidedTranslationsRegistry(project).populate();
                 translationsDiscovered = true;
             }
 
+            /* 3+ threads will wait 1st and 2nd here */
             try {
                 while (!usagesDiscovered || !translationsDiscovered) {
                     wait(100);
@@ -80,13 +82,13 @@ Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections"
             } catch (InterruptedException interrupted) {
                 final String group   = "Yii2 Inspections";
                 final String message = "Translations update has been interrupted";
-                Notifications.Bus.notify(new Notification(group, group, message, NotificationType.ERROR));
+                Notifications.Bus.notify(new Notification(group, group, message, NotificationType.ERROR), project);
             }
 
             if (new UpdateTranslationsPatcher(file).patch(this.usedTranslations)) {
                 final String group   = "Yii2 Inspections";
                 final String message = "Needs check: " + file.getVirtualFile().getCanonicalPath();
-                Notifications.Bus.notify(new Notification(group, group, message, NotificationType.INFORMATION));
+                Notifications.Bus.notify(new Notification(group, group, message, NotificationType.INFORMATION), project);
             }
         };
     }

@@ -1,5 +1,12 @@
 package com.kalessil.phpStorm.yii2inspections.actors.upadateTranslations.registry;
 
+import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /*
  * This file is part of the Yii2 Inspections package.
  *
@@ -8,13 +15,6 @@ package com.kalessil.phpStorm.yii2inspections.actors.upadateTranslations.registr
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 final class ProjectTranslationTwigCallsFinder {
     final private PsiFile file;

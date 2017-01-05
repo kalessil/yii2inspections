@@ -1,14 +1,5 @@
 package com.kalessil.phpStorm.yii2inspections.actors.upadateTranslations.registry;
 
-/*
- * This file is part of the Yii2 Inspections package.
- *
- * Author: Vladimir Reznichenko <kalessil@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -18,6 +9,15 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+/*
+ * This file is part of the Yii2 Inspections package.
+ *
+ * Author: Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -73,7 +73,7 @@ final public class ProvidedTranslationsRegistry {
         } catch (InterruptedException interrupted) {
             final String group   = "Yii2 Inspections";
             final String message = "Existing translations scan has been interrupted";
-            Notifications.Bus.notify(new Notification(group, group, message, NotificationType.ERROR));
+            Notifications.Bus.notify(new Notification(group, group, message, NotificationType.ERROR), this.project);
         }
 
         /* TODO: remove this debug */
@@ -83,7 +83,7 @@ final public class ProvidedTranslationsRegistry {
         }
         final String group   = "Yii2 Inspections";
         final String message = "Translations: files " + countProcessedFiles + " groups " + this.translations.size() + " messages " + countTranslations;
-        Notifications.Bus.notify(new Notification(group, group, message, NotificationType.INFORMATION));
+        Notifications.Bus.notify(new Notification(group, group, message, NotificationType.INFORMATION), this.project);
 
         return this.translations;
     }

@@ -79,7 +79,7 @@ final public class UsedTranslationsRegistry {
         } catch (InterruptedException interrupted) {
             final String group   = "Yii2 Inspections";
             final String message = "Used translations scan has been interrupted";
-            Notifications.Bus.notify(new Notification(group, group, message, NotificationType.ERROR));
+            Notifications.Bus.notify(new Notification(group, group, message, NotificationType.ERROR), this.project);
         }
 
         /* TODO: remove this debug */
@@ -89,7 +89,7 @@ final public class UsedTranslationsRegistry {
         }
         final String group   = "Yii2 Inspections";
         final String message = "Usages: files " + countProcessedFiles + " groups " + this.translations.size() + " messages " + countTranslations;
-        Notifications.Bus.notify(new Notification(group, group, message, NotificationType.INFORMATION));
+        Notifications.Bus.notify(new Notification(group, group, message, NotificationType.INFORMATION), this.project);
 
         return this.translations;
     }
