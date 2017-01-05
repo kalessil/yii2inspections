@@ -60,12 +60,22 @@ Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections"
                 final ProjectFilesFinder files = new ProjectFilesFinder(project);
                 while (files.hasNext()) {
                     final PsiFile theAssignedFile = (PsiFile) files.next();
-                    if (!theAssignedFile.getName().endsWith(".php")) {
+                    final String fileName         = theAssignedFile.getName();
+                    final boolean isPhp           = fileName.endsWith(".php");
+                    final boolean isHtml          = fileName.endsWith(".html");
+                    if (!isPhp && !isHtml) {
                         continue;
                     }
 
                     final Thread runnerThread = new Thread(scanners,
-                            () -> new ProjectTranslationCallsFinder(theAssignedFile).find(this.discovered));
+                            () -> {
+                                if (isPhp) {
+                                    new ProjectTranslationPhpCallsFinder(theAssignedFile).find(this.discovered);
+                                }
+                                if (isHtml) {
+                                    new ProjectTranslationTwigCallsFinder(theAssignedFile).find(this.discovered);
+                                }
+                            });
                     runnerThread.run();
                 }
 

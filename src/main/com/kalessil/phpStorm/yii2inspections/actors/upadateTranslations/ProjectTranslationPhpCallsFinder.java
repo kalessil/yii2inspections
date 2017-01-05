@@ -20,10 +20,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * file that was distributed with this source code.
  */
 
-final class ProjectTranslationCallsFinder {
+final class ProjectTranslationPhpCallsFinder {
     final private PsiFile file;
 
-    ProjectTranslationCallsFinder(@NotNull PsiFile file) {
+    ProjectTranslationPhpCallsFinder(@NotNull PsiFile file) {
         this.file = file;
     }
 
