@@ -30,13 +30,11 @@ final class UpdateTranslationsPatcher {
     }
 
     boolean patch(@NotNull ConcurrentHashMap<String, ConcurrentHashMap<String, String>> translations) {
-        /* drop the file if the category not used at all */
-        final String category = this.target.getName().replaceAll("\\.php$", "");
-        if (!translations.containsKey(category)) {
-            this.target.delete();
-            return true;
-        }
-        final ConcurrentHashMap<String, String> usedTranslations = translations.get(category);
+        /* if category is not used, create an empty container and make it empty later */
+        String category = this.target.getName().replaceAll("\\.php$", "");
+        category = category.matches("[a-zA-z]{2}(_[a-zA-z]{2})?") ? "craft" : category;
+        final ConcurrentHashMap<String, String> usedTranslations =
+                translations.containsKey(category) ? translations.get(category) : new ConcurrentHashMap<>();
 
         /* ignore file if its' structure is not as expected */
         final PhpReturn returnExpression = PsiTreeUtil.findChildOfType(this.target, PhpReturn.class);

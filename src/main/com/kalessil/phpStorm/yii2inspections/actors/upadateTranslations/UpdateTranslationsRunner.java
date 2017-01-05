@@ -29,6 +29,7 @@ final public class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor 
     @Nullable
     private ConcurrentHashMap<String, ConcurrentHashMap<String, String>> discovered = null;
     private boolean discoveringFinished = false;
+    private boolean startNotified       = false;
 
     public UpdateTranslationsRunner(Project project, PsiDirectory directory, boolean b) {
         super(project, directory, b, "Updating Yii2 translations", "Update Yii2 translations", false);
@@ -44,6 +45,10 @@ final public class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor 
         final PsiDirectory root = PsiManager.getInstance(project).findDirectory(project.getBaseDir());
         if (null == root) {
             return null;
+        }
+        if (!this.startNotified) {
+            this.startNotified = true;
+Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Scanning for used translation", NotificationType.INFORMATION));
         }
 
         return () -> {
