@@ -48,7 +48,7 @@ final public class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor 
         }
         if (!this.startNotified) {
             this.startNotified = true;
-Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Scanning for used translation", NotificationType.INFORMATION));
+Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections", "Scanning for used translations", NotificationType.INFORMATION));
         }
 
         return () -> {
@@ -71,10 +71,10 @@ Notifications.Bus.notify(new Notification("Yii2 Inspections", "Yii2 Inspections"
                             () -> {
                                 if (isPhp) {
                                     new ProjectTranslationPhpCallsFinder(theAssignedFile).find(this.discovered);
+                                    return;
                                 }
-                                if (isHtml) {
-                                    new ProjectTranslationTwigCallsFinder(theAssignedFile).find(this.discovered);
-                                }
+
+                                new ProjectTranslationTwigCallsFinder(theAssignedFile).find(this.discovered);
                             });
                     runnerThread.run();
                 }

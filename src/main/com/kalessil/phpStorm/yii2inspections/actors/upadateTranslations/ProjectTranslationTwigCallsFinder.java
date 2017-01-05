@@ -13,9 +13,17 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-final public class ProjectTranslationTwigCallsFinder {
+final class ProjectTranslationTwigCallsFinder {
     final private PsiFile file;
+
+    @SuppressWarnings("CanBeFinal")
+    static private Pattern regexTwigTranslateFilter = null;
+    static {
+        regexTwigTranslateFilter = Pattern.compile(".*\\W((\\'[^\\']+\\')|(\\\"[^\\\"]+\\\"))\\|(t|translate)\\W.*");
+    }
 
     ProjectTranslationTwigCallsFinder(@NotNull PsiFile file) {
         this.file = file;
@@ -23,6 +31,19 @@ final public class ProjectTranslationTwigCallsFinder {
 
     void find(ConcurrentHashMap<String, ConcurrentHashMap<String, String>> storage) {
         // t/translate are twig filters, see craft/app/etc/templating/twigextensions/CraftTwigExtension.php:59
-        final String regex = ".*\\W((\\'[^\\']+\\')|(\\\"[^\\\"]+\\\"))\\|(t|translate)\\W.*";
+        final String category = "craft";
+        if (!storage.containsKey(category)) {
+            storage.putIfAbsent(category, new ConcurrentHashMap<>());
+        }
+        final ConcurrentHashMap<String, String> translationsHolder = storage.get(category);
+
+        final Matcher regexMatcher = regexTwigTranslateFilter.matcher(this.file.getText());
+        while (regexMatcher.find()) {
+            final String expression = regexMatcher.group(1);
+            if (expression.length() > 2) {
+                final String message = expression.substring(1, expression.length() - 1);
+                translationsHolder.putIfAbsent(message, message);
+            }
+        }
     }
 }
