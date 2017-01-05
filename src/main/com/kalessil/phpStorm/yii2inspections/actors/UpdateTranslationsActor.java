@@ -51,7 +51,7 @@ final public class UpdateTranslationsActor extends AnAction {
         UpdateTranslationsRunner process = null == file ? new UpdateTranslationsRunner(project, directory, true) : new UpdateTranslationsRunner(project, file);
         process.addFileFilter(virtualFile -> {
             final String path = virtualFile.getCanonicalPath();
-            return null != path && path.matches(".*/(translations|messages)/[a-zA-z]{2}/[^/]+\\.php");
+            return null != path && path.matches(".*/(translations|messages)/([a-zA-z]{2}(_[a-zA-z]{2})?/)?[^/]+\\.php");
         });
         process.run();
     }

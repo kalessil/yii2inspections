@@ -3,6 +3,7 @@ package com.kalessil.phpStorm.yii2inspections.actors.upadateTranslations;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
@@ -35,27 +36,58 @@ final class ProjectTranslationCallsFinder {
                 continue;
             }
 
-            /* TODO: resolve the method, resolve params as string literals */
-
-            if (params[0] instanceof StringLiteralExpression && params[1] instanceof StringLiteralExpression) {
-                final StringLiteralExpression categoryExpression = (StringLiteralExpression) params[0];
-                final StringLiteralExpression messageExpression  = (StringLiteralExpression) params[1];
-                /* ignore strings with any injections */
-                if (null != categoryExpression.getFirstPsiChild() || null != messageExpression.getFirstPsiChild()) {
-                    continue;
-                }
-
-                /* create category translations holder if needed */
-                final String category = categoryExpression.getContents();
-                if (!storage.containsKey(category)) {
-                    storage.putIfAbsent(category, new ConcurrentHashMap<>());
-                }
-
-                /* store the message */
-                final ConcurrentHashMap<String, String> translationsHolder = storage.get(category);
-                final String message                                       = messageExpression.getContents();
-                translationsHolder.putIfAbsent(message, message);
+            /* resolve the method and identify platform */
+            final PsiElement methodCandidate = call.resolve();
+            if (!(methodCandidate instanceof Method)) {
+                continue;
             }
+            final String methodFQN = ((Method) methodCandidate).getFQN();
+            final boolean isYii    = methodFQN.equals("\\YiiBase::t");
+            final boolean isCraft  = methodFQN.equals("\\Craft\\Craft::t");
+
+            /* sort ot which params are category and message */
+            String category               = null;
+            String message                = null;
+            PsiElement categoryExpression = null;
+            PsiElement messageExpression  = null;
+            if (isCraft) {
+                // \Craft\Craft::t => $message, $variables, $source, $language, $category = 'craft'
+                if (params.length < 5) {
+                    category = "craft";
+                } else {
+                    categoryExpression = params[4];
+                }
+            }
+            if (isYii) {
+                // \YiiBase::t => $category, $message, ...
+                categoryExpression = params[0];
+                messageExpression  = params[1];
+            }
+
+            /* TODO: resolve params as string literals */
+            /* extract contained texts from message and category literals */
+            if (categoryExpression instanceof StringLiteralExpression) {
+                final StringLiteralExpression categoryLiteral = (StringLiteralExpression) categoryExpression;
+                if (null == categoryLiteral.getFirstPsiChild()) {
+                    category = categoryLiteral.getContents();
+                }
+            }
+            if (messageExpression instanceof StringLiteralExpression) {
+                final StringLiteralExpression messageLiteral = (StringLiteralExpression) messageExpression;
+                if (null == messageLiteral.getFirstPsiChild()) {
+                    message = messageLiteral.getContents();
+                }
+            }
+            if (null == category || null == message) {
+                continue;
+            }
+
+            /* create category translations holder if needed and store the message */
+            if (!storage.containsKey(category)) {
+                storage.putIfAbsent(category, new ConcurrentHashMap<>());
+            }
+            final ConcurrentHashMap<String, String> translationsHolder = storage.get(category);
+            translationsHolder.putIfAbsent(message, message);
         }
         calls.clear();
     }
