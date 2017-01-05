@@ -35,7 +35,6 @@ final public class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor 
 
     private boolean usagesDiscovered       = false;
     private boolean translationsDiscovered = false;
-    private boolean startNotified          = false;
 
     public UpdateTranslationsRunner(Project project, PsiDirectory directory, boolean b) {
         super(project, directory, b, "Updating Yii2 translations", "Update Yii2 translations", false);
@@ -51,13 +50,6 @@ final public class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor 
         final PsiDirectory root = PsiManager.getInstance(project).findDirectory(project.getBaseDir());
         if (null == root) {
             return null;
-        }
-        if (!this.startNotified) {
-            this.startNotified = true;
-
-            final String group   = "Yii2 Inspections";
-            final String message = "Scanning for used translations";
-            Notifications.Bus.notify(new Notification(group, group, message, NotificationType.INFORMATION), project);
         }
 
         return () -> {
@@ -85,7 +77,10 @@ final public class UpdateTranslationsRunner extends AbstractLayoutCodeProcessor 
                 Notifications.Bus.notify(new Notification(group, group, message, NotificationType.ERROR), project);
             }
 
-            if (new UpdateTranslationsPatcher(file).patch(this.usedTranslations)) {
+            if (
+                null != this.usedTranslations && null != this.exportedTranslations &&
+                new UpdateTranslationsPatcher(file).patch(this.usedTranslations, this.exportedTranslations)
+            ) {
                 final String group   = "Yii2 Inspections";
                 final String message = "Needs check: " + file.getVirtualFile().getCanonicalPath();
                 Notifications.Bus.notify(new Notification(group, group, message, NotificationType.INFORMATION), project);
