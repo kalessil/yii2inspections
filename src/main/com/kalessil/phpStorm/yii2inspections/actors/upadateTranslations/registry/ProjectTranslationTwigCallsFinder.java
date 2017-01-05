@@ -22,7 +22,8 @@ final class ProjectTranslationTwigCallsFinder {
     @SuppressWarnings("CanBeFinal")
     static private Pattern regexTwigTranslateFilter = null;
     static {
-        regexTwigTranslateFilter = Pattern.compile(".*\\W((\\'[^\\']+\\')|(\\\"[^\\\"]+\\\"))\\|(t|translate)\\W.*");
+        regexTwigTranslateFilter
+            = Pattern.compile(".*\\W((\\'[^\\']+\\')|(\\\"[^\\\"]+\\\"))\\|(t|translate)(\\(((\\'[^\\']+\\')|(\\\"[^\\\"]+\\\")))?\\W.*");
     }
 
     ProjectTranslationTwigCallsFinder(@NotNull PsiFile file) {
@@ -30,19 +31,18 @@ final class ProjectTranslationTwigCallsFinder {
     }
 
     void find(ConcurrentHashMap<String, ConcurrentHashMap<String, String>> storage) {
-        // t/translate are twig filters, see craft/app/etc/templating/twigextensions/CraftTwigExtension.php:59
-        final String category = "craft";
-        if (!storage.containsKey(category)) {
-            storage.putIfAbsent(category, new ConcurrentHashMap<>());
-        }
-        final ConcurrentHashMap<String, String> translationsHolder = storage.get(category);
-
         final Matcher regexMatcher = regexTwigTranslateFilter.matcher(this.file.getText());
         while (regexMatcher.find()) {
-            final String expression = regexMatcher.group(1);
-            if (expression.length() > 2) {
-                final String message = expression.substring(1, expression.length() - 1);
-                translationsHolder.putIfAbsent(message, message);
+            final String messageExpression = regexMatcher.group(1);
+            final String groupExpression   = null == regexMatcher.group(6) ? "'site'" : regexMatcher.group(6);
+            if (messageExpression.length() > 2 && groupExpression.length() > 2) {
+                final String message = messageExpression.substring(1, messageExpression.length() - 1);
+                final String group   = groupExpression.substring(1, groupExpression.length() - 1);
+
+                 if (!storage.containsKey(group)) {
+                    storage.putIfAbsent(group, new ConcurrentHashMap<>());
+                }
+                storage.get(group).putIfAbsent(message, message);
             }
         }
     }

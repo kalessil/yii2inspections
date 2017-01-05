@@ -72,9 +72,11 @@ final class UpdateTranslationsPatcher {
                 Notifications.Bus.notify(new Notification(group, group, message, NotificationType.INFORMATION), this.file.getProject());
             }
 
+            /* cleanup and report back to managing code */
             final boolean hasDefects = unusedMessages.size() > 0 || missingMessages.size() > 0;
             unusedMessages.clear();
             missingMessages.clear();
+
             return hasDefects;
         }
 
