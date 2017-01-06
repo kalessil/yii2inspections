@@ -52,7 +52,8 @@ final public class ProvidedTranslationsRegistry {
             }
 
             final String fileName       = theFile.getName();
-            final boolean isTranslation = fileName.endsWith(".php") && filePath.matches(".*/(translations|messages)/([a-zA-z]{2}(_[a-zA-z]{2})?)/[^/]+\\.php$");
+            final boolean isTranslation = fileName.endsWith(".php") && !fileName.matches("config.php")
+                    && filePath.matches(".*/(translations|messages)/([a-zA-z]{2}(_[a-zA-z]{2})?)/[^/]+\\.php$");
             if (!isTranslation) {
                 continue;
             }
