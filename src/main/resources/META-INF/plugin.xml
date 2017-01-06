@@ -21,7 +21,8 @@
 
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectConfigurable instance="com.kalessil.phpStorm.yii2inspections.Yii2InspectionsProjectConfig"/>
+        <projectConfigurable instance="com.kalessil.phpStorm.yii2inspections.Yii2InspectionsProjectConfig" />
+        <fileBasedIndex implementation="com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationsIndexer "/>
 
         <localInspection language="PHP" groupPath="PHP,Yii2 Inspections"
             shortName="PropertyFeatureAnnotatedInspection" displayName="@property Inspector"
