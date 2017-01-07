@@ -1,14 +1,5 @@
 package com.kalessil.phpStorm.yii2inspections.codeInsight;
 
-/*
- * This file is part of the Yii2 Inspections package.
- *
- * Author: Vladimir Reznichenko <kalessil@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.PsiElement;
@@ -27,6 +18,15 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+/*
+ * This file is part of the Yii2 Inspections package.
+ *
+ * Author: Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 final public class TranslationCallsIndexer extends FileBasedIndexExtension<String, Void> {
     public static final ID<String, Void> identity  = ID.create("com.kalessil.phpStorm.yii2inspections.translation_usages");

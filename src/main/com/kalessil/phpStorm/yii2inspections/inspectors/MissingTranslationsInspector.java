@@ -1,14 +1,5 @@
 package com.kalessil.phpStorm.yii2inspections.inspectors;
 
-/*
- * This file is part of the Yii2 Inspections package.
- *
- * Author: Vladimir Reznichenko <kalessil@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
@@ -27,6 +18,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
+/*
+ * This file is part of the Yii2 Inspections package.
+ *
+ * Author: Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 final public class MissingTranslationsInspector extends PhpInspection {
     private static final String messagePattern = "Some message are missing: %c% in total";
