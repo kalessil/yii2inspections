@@ -1,18 +1,23 @@
 package com.kalessil.phpStorm.yii2inspections.inspectors;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.inspections.PhpInspection;
-import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
-import com.jetbrains.php.lang.psi.elements.ArrayHashElement;
-import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.PhpElementType;
+import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationCallsIndexer;
 import com.kalessil.phpStorm.yii2inspections.inspectors.utils.TranslationProviderUtil;
@@ -73,11 +78,46 @@ final public class UnusedTranslationsInspector extends PhpInspection {
                         }, theScope);
 
                     if (0 == consumers.size()) {
-                        holder.registerProblem(pair, messagePattern, ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                        holder.registerProblem(pair, messagePattern, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new TheLocalFix());
                     }
                     consumers.clear();
                 }
             }
         };
+    }
+
+    private static class TheLocalFix implements LocalQuickFix {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Remove unused translations";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement();
+            if (expression instanceof ArrayHashElement) {
+                PsiElement next = expression.getNextSibling();
+                if (next instanceof PsiWhiteSpace) {
+                    next.delete();
+                }
+                next = expression.getNextSibling();
+                if (null != next && PhpTokenTypes.opCOMMA == next.getNode().getElementType()) {
+                    next.delete();
+                }
+                next = expression.getNextSibling();
+                if (next instanceof PsiWhiteSpace) {
+                    next.delete();
+                }
+
+                expression.delete();
+            }
+        }
     }
 }
