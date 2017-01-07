@@ -21,13 +21,17 @@
 
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectConfigurable instance="com.kalessil.phpStorm.yii2inspections.Yii2InspectionsProjectConfig" />
-        <fileBasedIndex implementation="com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationsIndexer "/>
+        <projectConfigurable instance="com.kalessil.phpStorm.yii2inspections.Yii2InspectionsProjectConfig"/>
+        <fileBasedIndex implementation="com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationsIndexer"/>
 
         <localInspection language="PHP" groupPath="PHP,Yii2 Inspections"
-            shortName="PropertyFeatureAnnotatedInspection" displayName="@property Inspector"
-            groupName="Architecture"                       enabledByDefault="true" level="WARNING"
+            shortName="PropertyFeatureAnnotatedInspection" displayName="Missing @property annotations"
+            groupName="Yii2"                               enabledByDefault="true" level="WARNING"
             implementationClass="com.kalessil.phpStorm.yii2inspections.inspectors.PropertyFeatureAnnotatedInspector"/>
+        <localInspection language="PHP" groupPath="PHP,Yii2 Inspections"
+            shortName="MessageHasTranslationsInspection"   displayName="Message doesn't have any translations"
+            groupName="Yii2"                               enabledByDefault="true" level="ERROR"
+            implementationClass="com.kalessil.phpStorm.yii2inspections.inspectors.MessageHasTranslationsInspector"/>
     </extensions>
 
     <actions>

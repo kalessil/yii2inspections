@@ -40,6 +40,7 @@ final public class PropertyFeatureAnnotatedInspector extends PhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new PhpElementVisitor() {
+            @Override
             public void visitPhpClass(PhpClass clazz) {
                 /* check only regular named classes */
                 final PsiElement nameNode = NamedElementUtil.getNameIdentifier(clazz);
