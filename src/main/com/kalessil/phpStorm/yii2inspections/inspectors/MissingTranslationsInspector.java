@@ -15,6 +15,7 @@ import com.jetbrains.php.lang.psi.elements.ArrayHashElement;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
+import com.jetbrains.php.util.PhpStringUtil;
 import com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationCallsIndexer;
 import com.kalessil.phpStorm.yii2inspections.inspectors.utils.TranslationProviderUtil;
 import org.jetbrains.annotations.NotNull;
@@ -123,30 +124,27 @@ final public class MissingTranslationsInspector extends PhpInspection {
                     return;
                 }
 
-                /* iterate missing translations and insert comments for test purposes */
                 for (String translation : missing) {
                     /* reach or create a comma */
                     PsiElement last = closingBracket.getPrevSibling();
                     if (last instanceof PsiWhiteSpace) {
                         last = last.getPrevSibling();
                     }
-                    /* add a comma if it's missing*/
                     if (null != last && PhpTokenTypes.opCOMMA != last.getNode().getElementType()) {
                         last.getParent().addAfter(PhpPsiElementFactory.createComma(project), last);
                         last = last.getNextSibling();
                     }
-                    if (null == last) {
-                        return;
-                    }
 
-                    /* add comment and comma after comma */
-                    final String patternComment = "/* " + translation + " */";
-                    final PsiComment comment    = PhpPsiElementFactory.createFromText(project, PsiComment.class, patternComment);
-                    final PsiWhiteSpace space   = PhpPsiElementFactory.createFromText(project, PsiWhiteSpace.class, " ");
-                    if (null == comment || null == space) {
+                    /* add a new translation */
+                    final String escaped                = PhpStringUtil.escapeText(PhpStringUtil.unescapeText(translation, true), true, '\n', '\t');
+                    final String pairPattern            = "array('%s%' => '%s%')".replace("%s%", escaped).replace("%s%", escaped);
+                    final ArrayCreationExpression array = PhpPsiElementFactory.createFromText(project, ArrayCreationExpression.class, pairPattern);
+                    final PhpPsiElement pair            = null == array ? null : array.getHashElements().iterator().next();
+                    final PsiWhiteSpace space           = PhpPsiElementFactory.createFromText(project, PsiWhiteSpace.class, " ");
+                    if (null == last || null == pair || null == space) {
                         continue;
                     }
-                    last.getParent().addAfter(comment, last);
+                    last.getParent().addAfter(pair, last);
                     last.getParent().addAfter(space, last);
                 }
             }
