@@ -92,7 +92,7 @@ final public class TranslatableMessagesInspector extends PhpInspection {
                             providers.add(virtualFile);
                         }
 
-                        return false;
+                        return true;
                     }, theScope);
 
                 /* report found cases */

@@ -27,7 +27,6 @@ final public class MissingTranslationsInspector extends PhpInspection {
     @NotNull
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new PhpElementVisitor() {
-
         };
     }
 }

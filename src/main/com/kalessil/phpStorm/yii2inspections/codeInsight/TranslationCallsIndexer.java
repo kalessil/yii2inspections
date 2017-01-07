@@ -81,7 +81,7 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
 
                     /* register usage */
                     if (null != category && null != message) {
-                        map.putIfAbsent(category + "\n" + message, null);
+                        map.putIfAbsent(category + "|" + message, null);
                     }
                 }
                 calls.clear();
@@ -96,7 +96,7 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
                     if (twigMessageExpression.length() > 2 && twigGroupExpression.length() > 2) {
                         final String message = twigMessageExpression.substring(1, twigMessageExpression.length() - 1);
                         final String group   = twigGroupExpression.substring(1, twigGroupExpression.length() - 1);
-                        map.putIfAbsent(group + "\n" + message, null);
+                        map.putIfAbsent(group + "|" + message, null);
                     }
                 }
             }
@@ -137,6 +137,6 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
 
     @Override
     public int getVersion() {
-        return 2;
+        return 3;
     }
 }
