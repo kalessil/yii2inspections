@@ -11,6 +11,7 @@ import com.intellij.util.io.KeyDescriptor;
 import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.util.PhpStringUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -81,7 +82,7 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
 
                     /* register usage */
                     if (null != category && null != message) {
-                        map.putIfAbsent(category + "|" + message, null);
+                        map.putIfAbsent(category + "|" + PhpStringUtil.unescapeText(message, true), null);
                     }
                 }
                 calls.clear();
@@ -96,7 +97,7 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
                     if (twigMessageExpression.length() > 2 && twigGroupExpression.length() > 2) {
                         final String message = twigMessageExpression.substring(1, twigMessageExpression.length() - 1);
                         final String group   = twigGroupExpression.substring(1, twigGroupExpression.length() - 1);
-                        map.putIfAbsent(group + "|" + message, null);
+                        map.putIfAbsent(group + "|" + PhpStringUtil.unescapeText(message, true), null);
                     }
                 }
             }

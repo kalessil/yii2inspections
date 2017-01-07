@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
+import com.jetbrains.php.util.PhpStringUtil;
 import com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationKeysIndexer;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang.StringUtils;
@@ -87,7 +88,8 @@ final public class TranslatableMessagesInspector extends PhpInspection {
                 }
 
                 /* prepare scope of index search */
-                final Set<String> searchEntry = new HashSet<>(Collections.singletonList(message));
+                final Set<String> searchEntry
+                        = new HashSet<>(Collections.singletonList(PhpStringUtil.unescapeText(message, true)));
                 GlobalSearchScope theScope = GlobalSearchScope.allScope(reference.getProject());
                 theScope = GlobalSearchScope.getScopeRestrictedByFileTypes(theScope, PhpFileType.INSTANCE);
 

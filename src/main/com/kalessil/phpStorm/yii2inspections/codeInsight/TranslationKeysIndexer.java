@@ -8,6 +8,7 @@ import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
 import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.util.PhpStringUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,7 +51,7 @@ final public class TranslationKeysIndexer extends FileBasedIndexExtension<String
                 final PhpPsiElement key = item.getKey();
                 if (key instanceof StringLiteralExpression) {
                     final String message = ((StringLiteralExpression) key).getContents();
-                    map.putIfAbsent(message, null);
+                    map.putIfAbsent(PhpStringUtil.unescapeText(message, true), null);
                 }
             }
 

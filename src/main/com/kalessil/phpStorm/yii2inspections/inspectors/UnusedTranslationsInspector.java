@@ -21,6 +21,7 @@ import com.jetbrains.php.lang.psi.elements.ArrayHashElement;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
+import com.jetbrains.php.util.PhpStringUtil;
 import com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationCallsIndexer;
 import com.kalessil.phpStorm.yii2inspections.inspectors.utils.TranslationProviderUtil;
 import org.jetbrains.annotations.NotNull;
@@ -69,10 +70,10 @@ final public class UnusedTranslationsInspector extends PhpInspection {
                         continue;
                     }
 
-                    final String messageToFind       = ((StringLiteralExpression) key).getContents();
                     final Set<VirtualFile> consumers = new HashSet<>();
 
-                    final Set<String> entry = new HashSet<>(Collections.singletonList(searchPrefix + messageToFind));
+                    final String messageToFind = PhpStringUtil.unescapeText(((StringLiteralExpression) key).getContents(), true);
+                    final Set<String> entry    = new HashSet<>(Collections.singletonList(searchPrefix + messageToFind));
                     FileBasedIndex.getInstance()
                         .getFilesWithKey(TranslationCallsIndexer.identity, entry, virtualFile -> {
                             consumers.add(virtualFile);
