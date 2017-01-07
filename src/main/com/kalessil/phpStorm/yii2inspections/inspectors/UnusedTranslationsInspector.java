@@ -4,6 +4,7 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -58,7 +59,7 @@ final public class UnusedTranslationsInspector extends PhpInspection {
 
                 /* prepare scope of index search */
                 GlobalSearchScope theScope = GlobalSearchScope.allScope(expression.getProject());
-                theScope = GlobalSearchScope.getScopeRestrictedByFileTypes(theScope, PhpFileType.INSTANCE);
+                theScope = GlobalSearchScope.getScopeRestrictedByFileTypes(theScope, PhpFileType.INSTANCE, HtmlFileType.INSTANCE);
 
                 /* iterate defined translations and report unused */
                 final String searchPrefix = file.getName().replaceAll("\\.php$", "|");
