@@ -13,8 +13,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public class TranslationsIndexer extends FileBasedIndexExtension<String, Void> {
-    public static final ID<String, Void> identity  = ID.create("com.kalessil.phpStorm.yii2inspections.translations");
+/*
+ * This file is part of the Yii2 Inspections package.
+ *
+ * Author: Vladimir Reznichenko <kalessil@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+public class TranslationKeysIndexer extends FileBasedIndexExtension<String, Void> {
+    public static final ID<String, Void> identity  = ID.create("com.kalessil.phpStorm.yii2inspections.translation_keys");
     private final KeyDescriptor<String> descriptor = new EnumeratorStringDescriptor();
 
     @NotNull
@@ -66,7 +75,7 @@ public class TranslationsIndexer extends FileBasedIndexExtension<String, Void> {
     public FileBasedIndex.InputFilter getInputFilter() {
         return file -> {
             //noinspection SimplifiableIfStatement - better readability
-            if (file.getFileType() != PhpFileType.INSTANCE || file.getName().equals("config.php")) {
+            if (PhpFileType.INSTANCE != file.getFileType() || file.getName().equals("config.php")) {
                 return false;
             }
 

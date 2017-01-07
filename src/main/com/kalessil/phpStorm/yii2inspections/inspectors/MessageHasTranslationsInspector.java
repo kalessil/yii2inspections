@@ -12,7 +12,7 @@ import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
-import com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationsIndexer;
+import com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationKeysIndexer;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -87,7 +87,7 @@ public class MessageHasTranslationsInspector extends PhpInspection {
                 final Set<VirtualFile> providers = new HashSet<>();
                 final String expectedFileName    = category + ".php";
                 FileBasedIndexImpl.getInstance()
-                    .getFilesWithKey(TranslationsIndexer.identity, searchEntry, virtualFile -> {
+                    .getFilesWithKey(TranslationKeysIndexer.identity, searchEntry, virtualFile -> {
                         if (virtualFile.getName().equals(expectedFileName)) {
                             providers.add(virtualFile);
                         }
@@ -97,7 +97,7 @@ public class MessageHasTranslationsInspector extends PhpInspection {
 
                 /* report found cases */
                 if (0 == providers.size()) {
-                    holder.registerProblem(messageExpression, messageNoTranslations, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    holder.registerProblem(messageExpression, messageNoTranslations, ProblemHighlightType.WEAK_WARNING);
                 }
                 providers.clear();
             }
