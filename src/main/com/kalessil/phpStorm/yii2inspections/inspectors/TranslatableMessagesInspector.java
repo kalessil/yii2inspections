@@ -6,7 +6,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.indexing.FileBasedIndexImpl;
+import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
@@ -86,7 +86,7 @@ final public class TranslatableMessagesInspector extends PhpInspection {
                 /* search the index */
                 final Set<VirtualFile> providers = new HashSet<>();
                 final String expectedFileName    = category + ".php";
-                FileBasedIndexImpl.getInstance()
+                FileBasedIndex.getInstance()
                     .getFilesWithKey(TranslationKeysIndexer.identity, searchEntry, virtualFile -> {
                         if (virtualFile.getName().equals(expectedFileName)) {
                             providers.add(virtualFile);

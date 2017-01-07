@@ -15,13 +15,15 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.indexing.FileBasedIndexImpl;
+import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.inspections.PhpInspection;
-import com.jetbrains.php.lang.psi.elements.*;
+import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
+import com.jetbrains.php.lang.psi.elements.ArrayHashElement;
+import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
+import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationCallsIndexer;
-import com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationKeysIndexer;
 import com.kalessil.phpStorm.yii2inspections.inspectors.utils.TranslationProviderUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,7 +66,7 @@ final public class UnusedTranslationsInspector extends PhpInspection {
                     final Set<VirtualFile> consumers = new HashSet<>();
 
                     final Set<String> entry = new HashSet<>(Collections.singletonList(searchPrefix + messageToFind));
-                    FileBasedIndexImpl.getInstance()
+                    FileBasedIndex.getInstance()
                         .getFilesWithKey(TranslationCallsIndexer.identity, entry, virtualFile -> {
                             consumers.add(virtualFile);
                             return true;

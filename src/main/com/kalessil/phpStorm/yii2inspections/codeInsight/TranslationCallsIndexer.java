@@ -137,6 +137,6 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
 
     @Override
     public int getVersion() {
-        return 3;
+        return 1;
     }
 }
