@@ -1,17 +1,15 @@
 package com.kalessil.phpStorm.yii2inspections.codeInsight;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
-import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.psi.elements.*;
+import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class TranslationsIndexer extends FileBasedIndexExtension<String, Void> {
@@ -31,21 +29,10 @@ public class TranslationsIndexer extends FileBasedIndexExtension<String, Void> {
             @NotNull
             @Override
             public Map<String, Void> map(@NotNull FileContent fileContent) {
-                final Map<String, Void> map = new HashMap<>();
-
-                /* ensure it's a target file */
-                final PsiFile theFile = fileContent.getPsiFile();
-                final String fileName = theFile.getName();
-                final String filePath = theFile.getVirtualFile().getCanonicalPath();
-                if (
-                    null == filePath || !fileName.endsWith(".php") || fileName.equals("config.php") ||
-                    !filePath.matches(".*/(translations|messages)/([a-zA-z]{2}(_[a-zA-z]{2})?)/[^/]+\\.php$")
-                ) {
-                    return map;
-                }
+                final Map<String, Void> map = new THashMap<>();
 
                 /* ignore file if its' structure is not as expected */
-                final PhpReturn returnExpression = PsiTreeUtil.findChildOfType(theFile, PhpReturn.class);
+                final PhpReturn returnExpression = PsiTreeUtil.findChildOfType(fileContent.getPsiFile(), PhpReturn.class);
                 final PsiElement argument        = null == returnExpression ? null : returnExpression.getArgument();
                 if (!(argument instanceof ArrayCreationExpression)) {
                     return map;
@@ -80,7 +67,16 @@ public class TranslationsIndexer extends FileBasedIndexExtension<String, Void> {
     @NotNull
     @Override
     public FileBasedIndex.InputFilter getInputFilter() {
-        return file -> file.getFileType() == PhpFileType.INSTANCE;
+        return file -> {
+            final String fileName = file.getName();
+            final String filePath = file.getCanonicalPath();
+            if (null == filePath || !fileName.endsWith(".php") || fileName.equals("config.php") ) {
+                return false;
+            }
+
+
+            return filePath.matches(".*/(translations|messages)/([a-zA-z]{2}(_[a-zA-z]{2})?)/[^/]+\\.php$");
+        };
     }
 
     @Override
@@ -90,6 +86,6 @@ public class TranslationsIndexer extends FileBasedIndexExtension<String, Void> {
 
     @Override
     public int getVersion() {
-        return 1;
+        return 3;
     }
 }
