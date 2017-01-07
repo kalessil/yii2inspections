@@ -82,7 +82,7 @@ final public class TranslatableMessagesInspector extends PhpInspection {
                 }
 
                 /* warn if non-ascii characters has been used */
-                if (nonAsciiCharsRegex.matcher(message).matches()) {
+                if (REPORT_NONASCII_CHARACTERS && nonAsciiCharsRegex.matcher(message).matches()) {
                     holder.registerProblem(messageExpression, messageNonAscii, ProblemHighlightType.WEAK_WARNING);
                 }
 
