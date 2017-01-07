@@ -1,11 +1,15 @@
 package com.kalessil.phpStorm.yii2inspections.inspectors;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.*;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.php.lang.inspections.PhpInspection;
+import com.jetbrains.php.lang.lexer.PhpTokenTypes;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.jetbrains.php.lang.psi.elements.ArrayHashElement;
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
@@ -80,12 +84,72 @@ final public class MissingTranslationsInspector extends PhpInspection {
 
                     if (missing.size() > 0) {
                         final String message = messagePattern.replace("%c%", String.valueOf(missing.size()));
-                        holder.registerProblem(expression.getFirstChild(), message, ProblemHighlightType.WEAK_WARNING);
+                        holder.registerProblem(expression.getFirstChild(), message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(missing));
                     }
                 }
 
                 providedMessages.clear();
             }
         };
+    }
+
+    private static class TheLocalFix implements LocalQuickFix {
+        final private Set<String> missing;
+
+        TheLocalFix(@NotNull Set<String> missing) {
+            super();
+            this.missing = missing;
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "Add missing translations";
+        }
+
+        @NotNull
+        @Override
+        public String getFamilyName() {
+            return getName();
+        }
+
+        @Override
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            final PsiElement expression = descriptor.getPsiElement();
+            if (null != expression && expression.getParent() instanceof ArrayCreationExpression) {
+                final ArrayCreationExpression container = (ArrayCreationExpression) expression.getParent();
+                final PsiElement closingBracket         = container.getLastChild();
+                if (null == closingBracket) {
+                    return;
+                }
+
+                /* iterate missing translations and insert comments for test purposes */
+                for (String translation : missing) {
+                    /* reach or create a comma */
+                    PsiElement last = closingBracket.getPrevSibling();
+                    if (last instanceof PsiWhiteSpace) {
+                        last = last.getPrevSibling();
+                    }
+                    /* add a comma if it's missing*/
+                    if (null != last && PhpTokenTypes.opCOMMA != last.getNode().getElementType()) {
+                        last.getParent().addAfter(PhpPsiElementFactory.createComma(project), last);
+                        last = last.getNextSibling();
+                    }
+                    if (null == last) {
+                        return;
+                    }
+
+                    /* add comment and comma after comma */
+                    final String patternComment = "/* " + translation + " */";
+                    final PsiComment comment    = PhpPsiElementFactory.createFromText(project, PsiComment.class, patternComment);
+                    final PsiWhiteSpace space   = PhpPsiElementFactory.createFromText(project, PsiWhiteSpace.class, " ");
+                    if (null == comment || null == space) {
+                        continue;
+                    }
+                    last.getParent().addAfter(comment, last);
+                    last.getParent().addAfter(space, last);
+                }
+            }
+        }
     }
 }
