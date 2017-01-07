@@ -36,15 +36,6 @@
     </extensions>
 
     <actions>
-        <!-- see also com.intellij.codeInsight.actions.OptimizeImportsAction -->
-        <!-- see also https://github.com/ahubold/intellij-optimize-imports-for-scope -->
-        <!-- see also .../IntelliJ IDEA 2016.2.5/lib/resources.jar!/idea/PlatformLangActionManager.xml:59 -->
-        <action id="yii2UpdateTranslations"
-                class="com.kalessil.phpStorm.yii2inspections.actors.UpdateTranslationsActor"
-                text="Update Yii2 translations" description="Adds missing and drops unused translations"
-        >
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="InspectCode"/>
-        </action>
     </actions>
 
 </idea-plugin>
