@@ -13,9 +13,13 @@ import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationKeysIndexer;
+import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,6 +35,10 @@ import java.util.regex.Pattern;
  */
 
 final public class TranslatableMessagesInspector extends PhpInspection {
+    // configuration flags automatically saved by IDE
+    @SuppressWarnings("WeakerAccess")
+    public boolean REPORT_NONASCII_CHARACTERS = true;
+
     private static final String messageNoTranslations = "The message doesn't have any translations or doesn't belong to the category";
     private static final String messageNonAscii       = "Usage of any characters out of ASCII range will cause translation problems.";
 
@@ -102,5 +110,32 @@ final public class TranslatableMessagesInspector extends PhpInspection {
                 providers.clear();
             }
         };
+    }
+
+    public JComponent createOptionsPanel() {
+        return (new TranslatableMessagesInspector.OptionsPanel()).getComponent();
+    }
+
+    private class OptionsPanel {
+        final private JPanel optionsPanel;
+
+        final private JCheckBox reportNonAsciiCodes;
+
+        OptionsPanel() {
+            optionsPanel = new JPanel();
+            optionsPanel.setLayout(new MigLayout());
+
+            reportNonAsciiCodes = new JCheckBox("Report non-ASCII characters", REPORT_NONASCII_CHARACTERS);
+            reportNonAsciiCodes.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    REPORT_NONASCII_CHARACTERS = reportNonAsciiCodes.isSelected();
+                }
+            });
+            optionsPanel.add(reportNonAsciiCodes, "wrap");
+        }
+
+        JPanel getComponent() {
+            return optionsPanel;
+        }
     }
 }
