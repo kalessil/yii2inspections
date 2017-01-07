@@ -140,7 +140,7 @@ final public class MissingTranslationsInspector extends PhpInspection {
                     }
 
                     /* add a new translation */
-                    final String escaped                = PhpStringUtil.escapeText(PhpStringUtil.unescapeText(translation, true), true, '\n', '\t');
+                    final String escaped                = PhpStringUtil.escapeText(translation, true, '\n', '\t');
                     final String pairPattern            = "array('%s%' => '%s%')".replace("%s%", escaped).replace("%s%", escaped);
                     final ArrayCreationExpression array = PhpPsiElementFactory.createFromText(project, ArrayCreationExpression.class, pairPattern);
                     final PhpPsiElement pair            = null == array ? null : array.getHashElements().iterator().next();
