@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /*
  * This file is part of the Yii2 Inspections package.
@@ -30,7 +31,14 @@ import java.util.Set;
  */
 
 public class MessageHasTranslationsInspector extends PhpInspection {
-    private static final String messagePattern = "The message doesn't have any translations or doesn't belong to the category";
+    private static final String messageNoTranslations = "The message doesn't have any translations or doesn't belong to the category";
+    private static final String messageNonAscii       = "Usage of any characters out of ASCII range will cause translation problems.";
+
+    @SuppressWarnings("CanBeFinal")
+    static private Pattern nonAsciiCharsRegex = null;
+    static {
+        nonAsciiCharsRegex = Pattern.compile(".*[^\\u0000-\\u007F]+.*");
+    }
 
     @NotNull
     public String getShortName() {
@@ -65,6 +73,11 @@ public class MessageHasTranslationsInspector extends PhpInspection {
                     return;
                 }
 
+                /* warn if non-ascii characters has been used */
+                if (nonAsciiCharsRegex.matcher(message).matches()) {
+                    holder.registerProblem(messageExpression, messageNonAscii, ProblemHighlightType.WEAK_WARNING);
+                }
+
                 /* prepare scope of index search */
                 final Set<String> searchEntry = new HashSet<>(Collections.singletonList(message));
                 GlobalSearchScope theScope = GlobalSearchScope.allScope(reference.getProject());
@@ -84,7 +97,7 @@ public class MessageHasTranslationsInspector extends PhpInspection {
 
                 /* report found cases */
                 if (0 == providers.size()) {
-                    holder.registerProblem(messageExpression, messagePattern, ProblemHighlightType.GENERIC_ERROR);
+                    holder.registerProblem(messageExpression, messageNoTranslations, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
                 providers.clear();
             }
