@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  * file that was distributed with this source code.
  */
 
-public class MessageHasTranslationsInspector extends PhpInspection {
+final public class TranslatableMessagesInspector extends PhpInspection {
     private static final String messageNoTranslations = "The message doesn't have any translations or doesn't belong to the category";
     private static final String messageNonAscii       = "Usage of any characters out of ASCII range will cause translation problems.";
 
@@ -42,7 +42,7 @@ public class MessageHasTranslationsInspector extends PhpInspection {
 
     @NotNull
     public String getShortName() {
-        return "MessageHasTranslationsInspection";
+        return "TranslatableMessagesInspection";
     }
 
     @Override

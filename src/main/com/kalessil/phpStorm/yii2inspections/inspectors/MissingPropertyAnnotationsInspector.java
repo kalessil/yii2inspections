@@ -28,12 +28,12 @@ import java.util.*;
  * file that was distributed with this source code.
  */
 
-final public class PropertyFeatureAnnotatedInspector extends PhpInspection {
+final public class MissingPropertyAnnotationsInspector extends PhpInspection {
     private static final String messagePattern = "'%p%': properties needs to be annotated";
 
     @NotNull
     public String getShortName() {
-        return "PropertyFeatureAnnotatedInspection";
+        return "MissingPropertyAnnotationsInspection";
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 final public class PropertyFeatureAnnotatedInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.configureByFile("fixtures/property-tags.php");
-        myFixture.enableInspections(PropertyFeatureAnnotatedInspector.class);
+        myFixture.enableInspections(MissingPropertyAnnotationsInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }

@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TranslationCallsIndexer extends FileBasedIndexExtension<String, Void> {
+final public class TranslationCallsIndexer extends FileBasedIndexExtension<String, Void> {
     public static final ID<String, Void> identity  = ID.create("com.kalessil.phpStorm.yii2inspections.translation_usages");
     private final KeyDescriptor<String> descriptor = new EnumeratorStringDescriptor();
 
@@ -81,7 +81,7 @@ public class TranslationCallsIndexer extends FileBasedIndexExtension<String, Voi
 
                     /* register usage */
                     if (null != category && null != message) {
-                        map.putIfAbsent(category + "|" + message, null);
+                        map.putIfAbsent(category + "\n" + message, null);
                     }
                 }
                 calls.clear();
@@ -96,7 +96,7 @@ public class TranslationCallsIndexer extends FileBasedIndexExtension<String, Voi
                     if (twigMessageExpression.length() > 2 && twigGroupExpression.length() > 2) {
                         final String message = twigMessageExpression.substring(1, twigMessageExpression.length() - 1);
                         final String group   = twigGroupExpression.substring(1, twigGroupExpression.length() - 1);
-                        map.putIfAbsent(group + "|" + message, null);
+                        map.putIfAbsent(group + "\n" + message, null);
                     }
                 }
             }
@@ -137,6 +137,6 @@ public class TranslationCallsIndexer extends FileBasedIndexExtension<String, Voi
 
     @Override
     public int getVersion() {
-        return 1;
+        return 2;
     }
 }

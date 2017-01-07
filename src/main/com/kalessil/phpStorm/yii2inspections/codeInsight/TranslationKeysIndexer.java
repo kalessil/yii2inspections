@@ -22,7 +22,7 @@ import java.util.Map;
  * file that was distributed with this source code.
  */
 
-public class TranslationKeysIndexer extends FileBasedIndexExtension<String, Void> {
+final public class TranslationKeysIndexer extends FileBasedIndexExtension<String, Void> {
     public static final ID<String, Void> identity  = ID.create("com.kalessil.phpStorm.yii2inspections.translation_keys");
     private final KeyDescriptor<String> descriptor = new EnumeratorStringDescriptor();
 
