@@ -129,11 +129,7 @@ final public class TranslatableMessagesInspector extends PhpInspection {
             optionsPanel.setLayout(new MigLayout());
 
             reportNonAsciiCodes = new JCheckBox("Report non-ASCII characters", REPORT_NONASCII_CHARACTERS);
-            reportNonAsciiCodes.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    REPORT_NONASCII_CHARACTERS = reportNonAsciiCodes.isSelected();
-                }
-            });
+            reportNonAsciiCodes.addChangeListener(e -> REPORT_NONASCII_CHARACTERS = reportNonAsciiCodes.isSelected());
             optionsPanel.add(reportNonAsciiCodes, "wrap");
         }
 
