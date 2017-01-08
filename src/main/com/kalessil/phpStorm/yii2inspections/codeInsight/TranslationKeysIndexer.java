@@ -80,7 +80,7 @@ final public class TranslationKeysIndexer extends FileBasedIndexExtension<String
                 return false;
             }
 
-            return file.getPath().matches(".*/(translations|messages)/([a-zA-z]{2}(_[a-zA-z]{2})?)/[^/]+\\.php$");
+            return file.getPath().matches(".*/(translations|messages)/([a-zA-z]{2}(-[a-zA-z]{2})?)/[^/]+\\.php$");
         };
     }
 
@@ -91,6 +91,6 @@ final public class TranslationKeysIndexer extends FileBasedIndexExtension<String
 
     @Override
     public int getVersion() {
-        return 1;
+        return 2;
     }
 }

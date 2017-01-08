@@ -20,6 +20,6 @@ final public class TranslationProviderUtil {
             return false;
         }
         return file.getVirtualFile().getPath()
-                .matches(".*/(translations|messages)/([a-zA-z]{2}(_[a-zA-z]{2})?)/[^/]+\\.php$");
+                .matches(".*/(translations|messages)/([a-zA-z]{2}(-[a-zA-z]{2})?)/[^/]+\\.php$");
     }
 }

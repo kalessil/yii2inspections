@@ -124,7 +124,7 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
         return file -> {
             final FileType fileType = file.getFileType();
             if (PhpFileType.INSTANCE == fileType) {
-                return !file.getPath().matches(".*/(translations|messages)/([a-zA-z]{2}(_[a-zA-z]{2})?)/[^/]+\\.php$");
+                return !file.getPath().matches(".*/(translations|messages)/([a-zA-z]{2}(-[a-zA-z]{2})?)/[^/]+\\.php$");
             }
 
             return HtmlFileType.INSTANCE == fileType;
@@ -138,6 +138,6 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
 
     @Override
     public int getVersion() {
-        return 1;
+        return 2;
     }
 }
