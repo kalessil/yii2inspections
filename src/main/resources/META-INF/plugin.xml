@@ -25,19 +25,19 @@
         <fileBasedIndex implementation="com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationKeysIndexer"/>
         <fileBasedIndex implementation="com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationCallsIndexer"/>
 
-        <localInspection language="PHP" groupPath="PHP,Yii2 Inspections"
+        <localInspection language="PHP" groupPath="PHP"
             shortName="MissingPropertyAnnotationsInspection" displayName="Missing @property annotations"
             groupName="Yii2"                                 enabledByDefault="true" level="WEAK WARNING"
             implementationClass="com.kalessil.phpStorm.yii2inspections.inspectors.MissingPropertyAnnotationsInspector"/>
-        <localInspection language="PHP" groupPath="PHP,Yii2 Inspections"
+        <localInspection language="PHP" groupPath="PHP"
             shortName="TranslatableMessagesInspection"       displayName="Message doesn't have any translations"
             groupName="Yii2"                                 enabledByDefault="true" level="WEAK WARNING"
             implementationClass="com.kalessil.phpStorm.yii2inspections.inspectors.TranslatableMessagesInspector"/>
-        <localInspection language="PHP" groupPath="PHP,Yii2 Inspections"
+        <localInspection language="PHP" groupPath="PHP"
             shortName="MissingTranslationsInspection"        displayName="Missing translations"
             groupName="Yii2"                                 enabledByDefault="true" level="WEAK WARNING"
             implementationClass="com.kalessil.phpStorm.yii2inspections.inspectors.MissingTranslationsInspector"/>
-        <localInspection language="PHP" groupPath="PHP,Yii2 Inspections"
+        <localInspection language="PHP" groupPath="PHP"
             shortName="UnusedTranslationsInspection"         displayName="Unused translations"
             groupName="Yii2"                                 enabledByDefault="true" level="WEAK WARNING"
             implementationClass="com.kalessil.phpStorm.yii2inspections.inspectors.UnusedTranslationsInspector"/>
