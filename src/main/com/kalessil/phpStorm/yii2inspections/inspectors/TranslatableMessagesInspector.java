@@ -14,6 +14,7 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.jetbrains.php.util.PhpStringUtil;
 import com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationKeysIndexer;
+import com.kalessil.phpStorm.yii2inspections.inspectors.utils.StringLiteralExtractUtil;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -68,12 +69,12 @@ final public class TranslatableMessagesInspector extends PhpInspection {
                 }
 
                 /* validate provided arguments */
-                if (!(params[0] instanceof StringLiteralExpression) || !(params[1] instanceof StringLiteralExpression)) {
-                    return;
-                }
-                StringLiteralExpression categoryExpression = (StringLiteralExpression) params[0];
-                StringLiteralExpression messageExpression  = (StringLiteralExpression) params[1];
-                if (null != categoryExpression.getFirstPsiChild() || null != messageExpression.getFirstPsiChild()) {
+                StringLiteralExpression categoryExpression = StringLiteralExtractUtil.resolveAsStringLiteral(params[0]);
+                StringLiteralExpression messageExpression  = StringLiteralExtractUtil.resolveAsStringLiteral(params[1]);
+                if (
+                    null == categoryExpression || null != categoryExpression.getFirstPsiChild() ||
+                    null == messageExpression  || null != messageExpression.getFirstPsiChild()
+                ) {
                     return;
                 }
                 final String category = categoryExpression.getContents();
