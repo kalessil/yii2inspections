@@ -77,7 +77,7 @@ final public class TranslationsCorrectnessInspector extends PhpInspection {
                     null == messageExpression  || null != messageExpression.getFirstPsiChild()
                 ) {
                     if (REPORT_INJECTIONS && null != messageExpression && null != messageExpression.getFirstPsiChild()) {
-                        holder.registerProblem(messageExpression, messageInjections, ProblemHighlightType.WEAK_WARNING);
+                        holder.registerProblem(params[1], messageInjections, ProblemHighlightType.WEAK_WARNING);
                     }
 
                     return;
@@ -90,7 +90,7 @@ final public class TranslationsCorrectnessInspector extends PhpInspection {
 
                 /* warn if non-ascii characters has been used */
                 if (REPORT_NONASCII_CHARACTERS && nonAsciiCharsRegex.matcher(message).matches()) {
-                    holder.registerProblem(messageExpression, messageNonAscii, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(params[1], messageNonAscii, ProblemHighlightType.WEAK_WARNING);
                 }
 
                 /* prepare scope of index search */
@@ -113,7 +113,7 @@ final public class TranslationsCorrectnessInspector extends PhpInspection {
 
                 /* report found cases */
                 if (0 == providers.size()) {
-                    holder.registerProblem(messageExpression, messageNoTranslations, ProblemHighlightType.WEAK_WARNING);
+                    holder.registerProblem(params[1], messageNoTranslations, ProblemHighlightType.WEAK_WARNING);
                 }
                 providers.clear();
             }
