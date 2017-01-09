@@ -1,5 +1,12 @@
 package com.kalessil.phpStorm.yii2inspections.inspectors.utils;
 
+import com.jetbrains.php.lang.psi.elements.PhpClass;
+import org.jetbrains.annotations.NotNull;
+
+import java.security.InvalidParameterException;
+import java.util.HashSet;
+import java.util.Set;
+
 /*
  * This file is part of the Yii2 Inspections package.
  *
@@ -8,13 +15,6 @@ package com.kalessil.phpStorm.yii2inspections.inspectors.utils;
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-import com.jetbrains.php.lang.psi.elements.PhpClass;
-import org.jetbrains.annotations.NotNull;
-
-import java.security.InvalidParameterException;
-import java.util.HashSet;
-import java.util.Set;
 
 final public class InheritanceChainExtractUtil {
     @NotNull

@@ -1,5 +1,9 @@
 package com.kalessil.phpStorm.yii2inspections.inspectors.utils;
 
+import com.intellij.psi.PsiFile;
+import com.jetbrains.php.lang.PhpFileType;
+import org.jetbrains.annotations.Nullable;
+
 /*
  * This file is part of the Yii2 Inspections package.
  *
@@ -8,10 +12,6 @@ package com.kalessil.phpStorm.yii2inspections.inspectors.utils;
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-import com.intellij.psi.PsiFile;
-import com.jetbrains.php.lang.PhpFileType;
-import org.jetbrains.annotations.Nullable;
 
 final public class TranslationProviderUtil {
     static public boolean isProvider(@Nullable PsiFile file) {
