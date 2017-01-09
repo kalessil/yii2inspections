@@ -13,5 +13,7 @@ function stringsDiscoveryWrapper() {
     /* false-positives */
     Yii::t('app', 'Existing translation');
     Yii::t('app', 'With "');
+    Yii::t('app', "With \"");
     Yii::t('app', "With '");
+    Yii::t('app', 'With \'');
 }
