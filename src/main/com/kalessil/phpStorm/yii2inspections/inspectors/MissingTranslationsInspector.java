@@ -60,8 +60,10 @@ final public class MissingTranslationsInspector extends PhpInspection {
                 for (ArrayHashElement pair : expression.getHashElements()) {
                     final PhpPsiElement key = pair.getKey();
                     if (key instanceof StringLiteralExpression) {
-                        final String message = ((StringLiteralExpression) key).getContents();
-                        providedMessages.add(PhpStringUtil.unescapeText(message, true));
+                        final StringLiteralExpression literal = (StringLiteralExpression) key;
+                        final String message                  = literal.getContents();
+                        final boolean isSingleQuote           = literal.isSingleQuote();
+                        providedMessages.add(PhpStringUtil.unescapeText(message, isSingleQuote));
                     }
                 }
                 if (0 == providedMessages.size()) {

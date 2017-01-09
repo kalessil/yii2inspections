@@ -72,7 +72,9 @@ final public class UnusedTranslationsInspector extends PhpInspection {
 
                     final Set<VirtualFile> consumers = new HashSet<>();
 
-                    final String messageToFind = PhpStringUtil.unescapeText(((StringLiteralExpression) key).getContents(), true);
+                    final StringLiteralExpression literal = (StringLiteralExpression) key;
+                    final boolean isSingleQuote           = literal.isSingleQuote();
+                    final String messageToFind            = PhpStringUtil.unescapeText(literal.getContents(), isSingleQuote);
                     final Set<String> entry    = new HashSet<>(Collections.singletonList(searchPrefix + messageToFind));
                     FileBasedIndex.getInstance()
                         .getFilesWithKey(TranslationCallsIndexer.identity, entry, virtualFile -> {

@@ -82,8 +82,9 @@ final public class TranslationsCorrectnessInspector extends PhpInspection {
 
                     return;
                 }
-                final String category = categoryExpression.getContents();
-                final String message  = messageExpression.getContents();
+                final String category       = categoryExpression.getContents();
+                final String message        = messageExpression.getContents();
+                final boolean isSingleQuote = messageExpression.isSingleQuote();
                 if (StringUtils.isEmpty(category) || StringUtils.isEmpty(message)) {
                     return;
                 }
@@ -95,7 +96,7 @@ final public class TranslationsCorrectnessInspector extends PhpInspection {
 
                 /* prepare scope of index search */
                 final Set<String> searchEntry
-                        = new HashSet<>(Collections.singletonList(PhpStringUtil.unescapeText(message, true)));
+                        = new HashSet<>(Collections.singletonList(PhpStringUtil.unescapeText(message, isSingleQuote)));
                 GlobalSearchScope theScope = GlobalSearchScope.allScope(reference.getProject());
                 theScope = GlobalSearchScope.getScopeRestrictedByFileTypes(theScope, PhpFileType.INSTANCE);
 
