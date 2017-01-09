@@ -21,10 +21,16 @@
 
 
     <extensions defaultExtensionNs="com.intellij">
+        <!-- project configuration components -->
         <projectConfigurable instance="com.kalessil.phpStorm.yii2inspections.Yii2InspectionsProjectConfig"/>
+
+        <!-- code insight components -->
         <fileBasedIndex implementation="com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationKeysIndexer"/>
         <fileBasedIndex implementation="com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationCallsIndexer"/>
+        <completion.contributor language="PHP" implementationClass="com.kalessil.phpStorm.yii2inspections.codeInsight.TranslateMessageAutocompleteContributor"/>
+        <completion.confidence  language="PHP" implementationClass="com.kalessil.phpStorm.yii2inspections.codeInsight.TranslateMessageAutocompleteConfidence"/>
 
+        <!-- inspection components -->
         <localInspection language="PHP" groupPath="PHP"
             shortName="MissingPropertyAnnotationsInspection" displayName="Missing @property annotations"
             groupName="Yii2"                                 enabledByDefault="true" level="WEAK WARNING"
