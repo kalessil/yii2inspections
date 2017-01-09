@@ -20,8 +20,6 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,13 +34,16 @@ import java.util.regex.Pattern;
  * file that was distributed with this source code.
  */
 
-final public class TranslatableMessagesInspector extends PhpInspection {
+final public class TranslationsCorrectnessInspector extends PhpInspection {
     // configuration flags automatically saved by IDE
     @SuppressWarnings("WeakerAccess")
     public boolean REPORT_NONASCII_CHARACTERS = true;
+    @SuppressWarnings("WeakerAccess")
+    public boolean REPORT_INJECTIONS = true;
 
     private static final String messageNoTranslations = "The message doesn't have any translations or doesn't belong to the category";
-    private static final String messageNonAscii       = "Usage of any characters out of ASCII range will cause translation problems.";
+    private static final String messageNonAscii       = "Usage of any characters out of ASCII range is not recommended.";
+    private static final String messageInjections     = "Parametrized message should be used instead, e.g.: Yii::t('app', 'Token is: {token}', ['token' => 'value'])";
 
     @SuppressWarnings("CanBeFinal")
     static private Pattern nonAsciiCharsRegex = null;
@@ -52,7 +53,7 @@ final public class TranslatableMessagesInspector extends PhpInspection {
 
     @NotNull
     public String getShortName() {
-        return "TranslatableMessagesInspection";
+        return "TranslationsCorrectnessInspection";
     }
 
     @Override
@@ -75,6 +76,10 @@ final public class TranslatableMessagesInspector extends PhpInspection {
                     null == categoryExpression || null != categoryExpression.getFirstPsiChild() ||
                     null == messageExpression  || null != messageExpression.getFirstPsiChild()
                 ) {
+                    if (REPORT_INJECTIONS && null != messageExpression && null != messageExpression.getFirstPsiChild()) {
+                        holder.registerProblem(messageExpression, messageInjections, ProblemHighlightType.WEAK_WARNING);
+                    }
+
                     return;
                 }
                 final String category = categoryExpression.getContents();
@@ -116,21 +121,26 @@ final public class TranslatableMessagesInspector extends PhpInspection {
     }
 
     public JComponent createOptionsPanel() {
-        return (new TranslatableMessagesInspector.OptionsPanel()).getComponent();
+        return (new TranslationsCorrectnessInspector.OptionsPanel()).getComponent();
     }
 
     private class OptionsPanel {
         final private JPanel optionsPanel;
 
         final private JCheckBox reportNonAsciiCodes;
+        final private JCheckBox reportInjections;
 
         OptionsPanel() {
             optionsPanel = new JPanel();
             optionsPanel.setLayout(new MigLayout());
 
-            reportNonAsciiCodes = new JCheckBox("Report non-ASCII characters", REPORT_NONASCII_CHARACTERS);
+            reportNonAsciiCodes = new JCheckBox("Report non-ASCII characters usage", REPORT_NONASCII_CHARACTERS);
             reportNonAsciiCodes.addChangeListener(e -> REPORT_NONASCII_CHARACTERS = reportNonAsciiCodes.isSelected());
             optionsPanel.add(reportNonAsciiCodes, "wrap");
+
+            reportInjections = new JCheckBox("Suggest using parametrised messages", REPORT_INJECTIONS);
+            reportInjections.addChangeListener(e -> REPORT_INJECTIONS = reportInjections.isSelected());
+            optionsPanel.add(reportInjections, "wrap");
         }
 
         JPanel getComponent() {

@@ -30,9 +30,9 @@
             groupName="Yii2"                                 enabledByDefault="true" level="WEAK WARNING"
             implementationClass="com.kalessil.phpStorm.yii2inspections.inspectors.MissingPropertyAnnotationsInspector"/>
         <localInspection language="PHP" groupPath="PHP"
-            shortName="TranslatableMessagesInspection"       displayName="Message doesn't have any translations"
+            shortName="TranslationsCorrectnessInspection"    displayName="Translation message correctness"
             groupName="Yii2"                                 enabledByDefault="true" level="WEAK WARNING"
-            implementationClass="com.kalessil.phpStorm.yii2inspections.inspectors.TranslatableMessagesInspector"/>
+            implementationClass="com.kalessil.phpStorm.yii2inspections.inspectors.TranslationsCorrectnessInspector"/>
         <localInspection language="PHP" groupPath="PHP"
             shortName="MissingTranslationsInspection"        displayName="Missing translations"
             groupName="Yii2"                                 enabledByDefault="true" level="WEAK WARNING"
