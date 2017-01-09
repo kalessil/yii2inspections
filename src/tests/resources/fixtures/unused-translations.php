@@ -1,3 +1,3 @@
 <?php
 
-    Yii::t('unused', 'Used message');
+    Yii::t('unused', 'Used message from PHP');
