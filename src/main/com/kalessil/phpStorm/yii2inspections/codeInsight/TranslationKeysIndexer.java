@@ -50,8 +50,10 @@ final public class TranslationKeysIndexer extends FileBasedIndexExtension<String
             for (ArrayHashElement item : ((ArrayCreationExpression) argument).getHashElements()) {
                 final PhpPsiElement key = item.getKey();
                 if (key instanceof StringLiteralExpression) {
-                    final String message = ((StringLiteralExpression) key).getContents();
-                    map.putIfAbsent(PhpStringUtil.unescapeText(message, true), null);
+                    final StringLiteralExpression literal = (StringLiteralExpression) key;
+                    final String message                  = literal.getContents();
+                    final boolean isSingleQuote           = literal.isSingleQuote();
+                    map.putIfAbsent(PhpStringUtil.unescapeText(message, isSingleQuote), null);
                 }
             }
 
@@ -91,6 +93,6 @@ final public class TranslationKeysIndexer extends FileBasedIndexExtension<String
 
     @Override
     public int getVersion() {
-        return 2;
+        return 3;
     }
 }

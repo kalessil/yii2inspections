@@ -65,8 +65,9 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
                     /* TODO: resolve params as string literals */
 
                     /* extract contained texts from message and category literals */
-                    String category = null;
-                    String message  = null;
+                    String category       = null;
+                    String message        = null;
+                    boolean isSingleQuote = true;
                     if (params[0] instanceof StringLiteralExpression) {
                         final StringLiteralExpression categoryLiteral = (StringLiteralExpression) params[0];
                         if (null == categoryLiteral.getFirstPsiChild()) {
@@ -76,13 +77,14 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
                     if (params[1] instanceof StringLiteralExpression) {
                         final StringLiteralExpression messageLiteral = (StringLiteralExpression) params[1];
                         if (null == messageLiteral.getFirstPsiChild()) {
-                            message = messageLiteral.getContents();
+                            message       = messageLiteral.getContents();
+                            isSingleQuote = messageLiteral.isSingleQuote();
                         }
                     }
 
                     /* register usage */
                     if (null != category && null != message) {
-                        map.putIfAbsent(category + "|" + PhpStringUtil.unescapeText(message, true), null);
+                        map.putIfAbsent(category + "|" + PhpStringUtil.unescapeText(message, isSingleQuote), null);
                     }
                 }
                 calls.clear();
@@ -95,9 +97,10 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
                     final String twigMessageExpression = regexMatcher.group(1);
                     final String twigGroupExpression   = null == regexMatcher.group(6) ? "'site'" : regexMatcher.group(6);
                     if (twigMessageExpression.length() > 2 && twigGroupExpression.length() > 2) {
-                        final String message = twigMessageExpression.substring(1, twigMessageExpression.length() - 1);
-                        final String group   = twigGroupExpression.substring(1, twigGroupExpression.length() - 1);
-                        map.putIfAbsent(group + "|" + PhpStringUtil.unescapeText(message, true), null);
+                        final String message        = twigMessageExpression.substring(1, twigMessageExpression.length() - 1);
+                        final String category       = twigGroupExpression.substring(1, twigGroupExpression.length() - 1);
+                        final boolean isSingleQuote = '\'' == twigMessageExpression.charAt(0);
+                        map.putIfAbsent(category + "|" + PhpStringUtil.unescapeText(message, isSingleQuote), null);
                     }
                 }
             }
@@ -138,6 +141,6 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
 
     @Override
     public int getVersion() {
-        return 2;
+        return 3;
     }
 }
