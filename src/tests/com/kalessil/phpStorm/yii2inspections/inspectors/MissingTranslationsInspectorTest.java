@@ -4,8 +4,10 @@ import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 
 final public class MissingTranslationsInspectorTest extends CodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
+        myFixture.allowTreeAccessForAllFiles();
         myFixture.configureByFile("fixtures/missing-translations.php");
-        myFixture.enableInspections(MissingPropertyAnnotationsInspector.class);
+        myFixture.configureByFile("fixtures/translations/en-US/missing.php");
+        myFixture.enableInspections(MissingTranslationsInspector.class);
         myFixture.testHighlighting(true, false, true);
     }
 }
