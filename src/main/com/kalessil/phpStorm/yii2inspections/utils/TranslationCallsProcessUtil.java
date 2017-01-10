@@ -22,6 +22,7 @@ import java.util.Map;
 
 final public class TranslationCallsProcessUtil {
 
+    /* Returns null if category is not clean or empty string literal or no reasonable messages were found*/
     @Nullable
     static public ProcessingResult process(@NotNull MethodReference reference) {
         final String name         = reference.getName();
@@ -32,7 +33,7 @@ final public class TranslationCallsProcessUtil {
 
         /* category needs to be resolved and without any injections */
         final StringLiteralExpression categoryLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(params[0]);
-        if (null == categoryLiteral || null != categoryLiteral.getFirstPsiChild()) {
+        if (null == categoryLiteral || null != categoryLiteral.getFirstPsiChild() || categoryLiteral.getTextLength() <= 2) {
             return null;
         }
 
@@ -40,7 +41,7 @@ final public class TranslationCallsProcessUtil {
         if (name.equals("t")) {
             /* 2nd argument expected to be a string literal (possible with injections) */
             final StringLiteralExpression messageLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(params[1]);
-            if (null != messageLiteral) {
+            if (null != messageLiteral && messageLiteral.getTextLength() > 2) {
                 messages.put(messageLiteral, params[1]);
             }
         }
@@ -50,7 +51,7 @@ final public class TranslationCallsProcessUtil {
             for (PsiElement child : params[1].getChildren()) {
                 final PsiElement literalCandidate            = child.getFirstChild();
                 final StringLiteralExpression messageLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(literalCandidate);
-                if (null != messageLiteral) {
+                if (null != messageLiteral && messageLiteral.getTextLength() > 2) {
                     messages.put(messageLiteral, literalCandidate);
                 }
             }
