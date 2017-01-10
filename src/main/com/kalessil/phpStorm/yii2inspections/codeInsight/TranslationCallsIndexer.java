@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.util.PhpStringUtil;
+import com.jetbrains.twig.TwigFileType;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -91,7 +92,7 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
             }
 
             /* extract translations from twig-constructs */
-            if (HtmlFileType.INSTANCE == fileType) {
+            if (HtmlFileType.INSTANCE == fileType || TwigFileType.INSTANCE == fileType) {
                 final Matcher regexMatcher = regexTwigTranslateFilter.matcher(fileContent.getPsiFile().getText());
                 while (regexMatcher.find()) {
                     final String twigMessageExpression = regexMatcher.group(1);
@@ -130,7 +131,7 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
                 return !file.getPath().matches(".*/(translations|messages)/([a-zA-z]{2}(-[a-zA-z]{2})?)/[^/]+\\.php$");
             }
 
-            return HtmlFileType.INSTANCE == fileType;
+            return HtmlFileType.INSTANCE == fileType || TwigFileType.INSTANCE == fileType;
         };
     }
 
@@ -141,6 +142,6 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
 
     @Override
     public int getVersion() {
-        return 3;
+        return 4;
     }
 }

@@ -7,6 +7,7 @@ final public class UnusedTranslationsInspectorTest extends CodeInsightFixtureTes
         myFixture.allowTreeAccessForAllFiles();
         myFixture.configureByFile("fixtures/unused-translations.php");
         myFixture.configureByFile("fixtures/unused-translations.html");
+        myFixture.configureByFile("fixtures/unused-translations.html.twig");
         myFixture.configureByFile("fixtures/translations/en-US/unused.php");
         myFixture.enableInspections(UnusedTranslationsInspector.class);
         myFixture.testHighlighting(true, false, true);

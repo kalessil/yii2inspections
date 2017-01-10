@@ -22,6 +22,7 @@ import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.jetbrains.php.util.PhpStringUtil;
+import com.jetbrains.twig.TwigFileType;
 import com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationCallsIndexer;
 import com.kalessil.phpStorm.yii2inspections.inspectors.utils.TranslationProviderUtil;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +61,7 @@ final public class UnusedTranslationsInspector extends PhpInspection {
 
                 /* prepare scope of index search */
                 GlobalSearchScope theScope = GlobalSearchScope.allScope(expression.getProject());
-                theScope = GlobalSearchScope.getScopeRestrictedByFileTypes(theScope, PhpFileType.INSTANCE, HtmlFileType.INSTANCE);
+                theScope = GlobalSearchScope.getScopeRestrictedByFileTypes(theScope, PhpFileType.INSTANCE, HtmlFileType.INSTANCE, TwigFileType.INSTANCE);
 
                 /* iterate defined translations and report unused */
                 final String searchPrefix = file.getName().replaceAll("\\.php$", "|");
