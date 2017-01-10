@@ -75,8 +75,8 @@ final public class TranslationsCorrectnessInspector extends PhpInspection {
                 }
 
                 /* iterate found translations and validate correctness */
-                final String expectedFileName                     = categoryLiteral.getContents() + ".php";
-                Map<StringLiteralExpression, PsiElement> messages = extracted.getMessages();
+                final String expectedFileName                           = categoryLiteral.getContents() + ".php";
+                final Map<StringLiteralExpression, PsiElement> messages = extracted.getMessages();
                 for (StringLiteralExpression literal : messages.keySet()) {
                     /* only quotes, no content presented */
                     if (literal.getTextLength() <= 2) {

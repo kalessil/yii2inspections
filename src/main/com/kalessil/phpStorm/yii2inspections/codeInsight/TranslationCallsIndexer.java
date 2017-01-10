@@ -13,6 +13,7 @@ import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.util.PhpStringUtil;
 import com.jetbrains.twig.TwigFileType;
+import com.kalessil.phpStorm.yii2inspections.utils.TranslationCallsProcessUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,37 +56,29 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
             final FileType fileType = fileContent.getFileType();
             if (PhpFileType.INSTANCE == fileType) {
                 final Collection<MethodReference> calls = PsiTreeUtil.findChildrenOfType(fileContent.getPsiFile(), MethodReference.class);
-                for (MethodReference call : calls) {
-                    final PsiElement[] params = call.getParameters();
-                    final String methodName   = call.getName();
-                    if (null == methodName || params.length < 2 || !methodName.equals("t")) {
+                for (MethodReference reference : calls) {
+                    final TranslationCallsProcessUtil.ProcessingResult extracted = TranslationCallsProcessUtil.process(reference);
+                    final StringLiteralExpression categoryLiteral                = null == extracted ? null : extracted.getCategory();
+                    if (
+                        null == categoryLiteral || 0 == extracted.getMessages().size() ||
+                        null != categoryLiteral.getFirstPsiChild() || categoryLiteral.getTextLength() <= 2
+                    ) {
+                        if (null != extracted) {
+                            extracted.dispose();
+                        }
                         continue;
                     }
 
-                    /* TODO: resolve params as string literals */
-
-                    /* extract contained texts from message and category literals */
-                    String category       = null;
-                    String message        = null;
-                    boolean isSingleQuote = true;
-                    if (params[0] instanceof StringLiteralExpression) {
-                        final StringLiteralExpression categoryLiteral = (StringLiteralExpression) params[0];
-                        if (null == categoryLiteral.getFirstPsiChild()) {
-                            category = categoryLiteral.getContents();
-                        }
-                    }
-                    if (params[1] instanceof StringLiteralExpression) {
-                        final StringLiteralExpression messageLiteral = (StringLiteralExpression) params[1];
-                        if (null == messageLiteral.getFirstPsiChild()) {
-                            message       = messageLiteral.getContents();
-                            isSingleQuote = messageLiteral.isSingleQuote();
-                        }
+                    final String category                                   = categoryLiteral.getContents();
+                    final Map<StringLiteralExpression, PsiElement> messages = extracted.getMessages();
+                    for (StringLiteralExpression literal : messages.keySet()) {
+                        map.putIfAbsent(
+                            category + "|" + PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote()),
+                            null
+                        );
                     }
 
-                    /* register usage */
-                    if (null != category && null != message) {
-                        map.putIfAbsent(category + "|" + PhpStringUtil.unescapeText(message, isSingleQuote), null);
-                    }
+                    extracted.dispose();
                 }
                 calls.clear();
             }
@@ -141,6 +134,6 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
 
     @Override
     public int getVersion() {
-        return 4;
+        return 5;
     }
 }
