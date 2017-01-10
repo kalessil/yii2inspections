@@ -27,8 +27,10 @@
         <!-- code insight components -->
         <fileBasedIndex implementation="com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationKeysIndexer"/>
         <fileBasedIndex implementation="com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationCallsIndexer"/>
-        <completion.contributor language="PHP" implementationClass="com.kalessil.phpStorm.yii2inspections.codeInsight.TranslateMessageAutocompleteContributor"/>
-        <completion.confidence  language="PHP" implementationClass="com.kalessil.phpStorm.yii2inspections.codeInsight.TranslateMessageAutocompleteConfidence"/>
+        <!--completion.contributor language="PHP"
+            implementationClass="com.kalessil.phpStorm.yii2inspections.codeInsight.TranslateMessageAutocompleteContributor"/>
+        <completion.confidence  language="PHP" id="asTrue" order="first"
+            implementationClass="com.kalessil.phpStorm.yii2inspections.codeInsight.TranslateMessageAutocompleteConfidence"/-->
 
         <!-- inspection components -->
         <localInspection language="PHP" groupPath="PHP"

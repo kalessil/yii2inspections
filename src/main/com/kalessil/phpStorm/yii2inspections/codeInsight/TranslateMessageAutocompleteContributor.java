@@ -9,6 +9,7 @@ import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
+import com.jetbrains.php.PhpIcons;
 import com.jetbrains.php.lang.PhpLanguage;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
@@ -19,8 +20,14 @@ public class TranslateMessageAutocompleteContributor extends CompletionContribut
         final CompletionProvider<CompletionParameters> provider = new CompletionProvider<CompletionParameters>() {
             @Override
             protected void addCompletions(@NotNull CompletionParameters completionParameters, ProcessingContext processingContext, @NotNull CompletionResultSet completionResultSet) {
-                Notifications.Bus.notify(new Notification("-", "-", "suggested", NotificationType.INFORMATION));
-                completionResultSet.addElement(LookupElementBuilder.create("Hello"));
+                final PsiElement target = completionParameters.getOriginalPosition();
+                if (null == target || !(target.getParent() instanceof StringLiteralExpression)) {
+                    return;
+                }
+
+                final StringLiteralExpression literal = (StringLiteralExpression) target.getParent();
+                completionResultSet.addElement(LookupElementBuilder.create("Hello").withIcon(PhpIcons.ADVICE_ICON));
+                Notifications.Bus.notify(new Notification("-", "-", "Adviced 'hello' for: " + literal.getContents(), NotificationType.INFORMATION));
             }
         };
         final ElementPattern<PsiElement> filter = PlatformPatterns.psiElement(PsiElement.class)
