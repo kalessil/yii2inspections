@@ -106,7 +106,9 @@ final public class MissingPropertyAnnotationsInspector extends PhpInspection {
                     }
 
                     /* store property and it's types */
-                    final Set<String> getterTypes = getterMethod.getType().filterUnknown().getTypes();
+                    final Set<String> getterTypes = new HashSet<>();
+
+                    getterTypes.addAll(getterMethod.getType().filterUnknown().getTypes());
                     final Parameter[] setterParams = setterMethod.getParameters();
                     if (setterParams.length > 0) {
                         getterTypes.addAll(setterParams[0].getType().filterUnknown().getTypes());
