@@ -106,14 +106,14 @@ final public class MissingPropertyAnnotationsInspector extends PhpInspection {
                     }
 
                     /* store property and it's types */
-                    final Set<String> getterTypes = new HashSet<>();
+                    final Set<String> propertyTypes = new HashSet<>();
 
-                    getterTypes.addAll(getterMethod.getType().filterUnknown().getTypes());
+                    propertyTypes.addAll(getterMethod.getType().filterUnknown().getTypes());
                     final Parameter[] setterParams = setterMethod.getParameters();
                     if (setterParams.length > 0) {
-                        getterTypes.addAll(setterParams[0].getType().filterUnknown().getTypes());
+                        propertyTypes.addAll(setterParams[0].getType().filterUnknown().getTypes());
                     }
-                    final String typesAsString = getterTypes.isEmpty() ? "mixed" : String.join("|", getterTypes);
+                    final String typesAsString = propertyTypes.isEmpty() ? "mixed" : String.join("|", propertyTypes);
 
                     properties.put(StringUtils.uncapitalize(getter.replaceAll("^get", "")), typesAsString);
                 }
