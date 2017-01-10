@@ -16,6 +16,7 @@ import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.jetbrains.php.util.PhpStringUtil;
 import com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationKeysIndexer;
 import com.kalessil.phpStorm.yii2inspections.inspectors.utils.StringLiteralExtractUtil;
+import com.kalessil.phpStorm.yii2inspections.utils.TranslationCallsProcessUtil;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -60,77 +61,45 @@ final public class TranslationsCorrectnessInspector extends PhpInspection {
         return new PhpElementVisitor() {
             @Override
             public void visitPhpMethodReference(MethodReference reference) {
-                /* check general call structure */
-                final PsiElement[] params = reference.getParameters();
-                final String methodName   = reference.getName();
-                if (null == methodName || params.length < 2 || (!methodName.equals("t") && !(methodName.equals("registerTranslations")))) {
+                /* ensure that it's a target call; category is not empty and has no injections; we have messages */
+                TranslationCallsProcessUtil.ProcessingResult extracted = TranslationCallsProcessUtil.process(reference);
+                StringLiteralExpression categoryLiteral                = null == extracted ? null : extracted.getCategory();
+                if (
+                    null == categoryLiteral || 0 == extracted.getMessages().size() ||
+                    null != categoryLiteral.getFirstPsiChild() || categoryLiteral.getTextLength() <= 2
+                ) {
+                    if (null != extracted) {
+                        extracted.dispose();
+                    }
                     return;
-                }
-
-                /* validate the provided category */
-                StringLiteralExpression categoryExpression = StringLiteralExtractUtil.resolveAsStringLiteral(params[0]);
-                if (null == categoryExpression || null != categoryExpression.getFirstPsiChild()) {
-                    return;
-                }
-                final String category         = categoryExpression.getContents();
-                final String expectedFileName = category + ".php";
-
-                /* validate the provided translation/translations */
-                final Map<StringLiteralExpression, PsiElement> messages = new HashMap<>();
-                if (methodName.equals("t")) {
-                    /* 2nd argument expected to be a string literal */
-                    StringLiteralExpression messageLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(params[1]);
-                    if (null == messageLiteral  || null != messageLiteral.getFirstPsiChild()) {
-                        if (REPORT_INJECTIONS && null != messageLiteral && null != messageLiteral.getFirstPsiChild()) {
-                            holder.registerProblem(params[1], messageInjection, ProblemHighlightType.WEAK_WARNING);
-                        }
-
-                        return;
-                    }
-                    messages.put(messageLiteral, params[1]);
-                }
-                if (methodName.equals("registerTranslations")) {
-                    /* 2nd argument expected to be an inline array */
-                    if (!(params[1] instanceof ArrayCreationExpression)) {
-                        return;
-                    }
-                    for (PsiElement child : params[1].getChildren()) {
-                        PsiElement literalCandidate             = child.getFirstChild();
-                        StringLiteralExpression messageLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(literalCandidate);
-                        if (null == messageLiteral) {
-                            continue;
-                        }
-
-                        if (REPORT_INJECTIONS && null != messageLiteral.getFirstPsiChild()) {
-                            holder.registerProblem(literalCandidate, messageInjection, ProblemHighlightType.WEAK_WARNING);
-                            continue;
-                        }
-
-                        messages.put(messageLiteral, literalCandidate);
-                    }
                 }
 
                 /* iterate found translations and validate correctness */
+                final String expectedFileName                     = categoryLiteral.getContents() + ".php";
+                Map<StringLiteralExpression, PsiElement> messages = extracted.getMessages();
                 for (StringLiteralExpression literal : messages.keySet()) {
-                    final String message        = literal.getContents();
-                    final boolean isSingleQuote = literal.isSingleQuote();
-                    if (StringUtils.isEmpty(category) || StringUtils.isEmpty(message)) {
-                        return;
+                    if (literal.getTextLength() < 3) {
+                        continue;
                     }
+
+                    final String message             = literal.getContents();
                     final PsiElement reportingTarget = messages.get(literal);
 
+                    /* warn injections are presented and skip further processing */
+                    if (REPORT_INJECTIONS && null != literal.getFirstPsiChild()) {
+                        holder.registerProblem(reportingTarget, messageInjection, ProblemHighlightType.WEAK_WARNING);
+                        continue;
+                    }
                     /* warn if non-ascii characters has been used */
                     if (REPORT_NONASCII_CHARACTERS && nonAsciiCharsRegex.matcher(message).matches()) {
                         holder.registerProblem(reportingTarget, messageNonAscii, ProblemHighlightType.WEAK_WARNING);
                     }
 
-                    /* prepare scope of index search */
+                    /* warn if the message is have no translations in the group */
                     final Set<String> searchEntry
-                            = new HashSet<>(Collections.singletonList(PhpStringUtil.unescapeText(message, isSingleQuote)));
+                        = new HashSet<>(Collections.singletonList(PhpStringUtil.unescapeText(message, literal.isSingleQuote())));
                     GlobalSearchScope theScope = GlobalSearchScope.allScope(reference.getProject());
-                    theScope = GlobalSearchScope.getScopeRestrictedByFileTypes(theScope, PhpFileType.INSTANCE);
-
-                    /* search the index */
+                    theScope                   = GlobalSearchScope.getScopeRestrictedByFileTypes(theScope, PhpFileType.INSTANCE);
                     final Set<VirtualFile> providers = new HashSet<>();
                     FileBasedIndex.getInstance()
                             .getFilesWithKey(TranslationKeysIndexer.identity, searchEntry, virtualFile -> {
@@ -147,7 +116,8 @@ final public class TranslationsCorrectnessInspector extends PhpInspection {
                     }
                     providers.clear();
                 }
-                messages.clear();
+
+                extracted.dispose();
             }
         };
     }

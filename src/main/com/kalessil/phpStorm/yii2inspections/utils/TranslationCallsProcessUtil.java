@@ -48,8 +48,8 @@ final public class TranslationCallsProcessUtil {
         if (name.equals("registerTranslations") && params[1] instanceof ArrayCreationExpression) {
             /* 2nd argument expected to be an inline array with string literal (possible with injections) */
             for (PsiElement child : params[1].getChildren()) {
-                PsiElement literalCandidate            = child.getFirstChild();
-                StringLiteralExpression messageLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(literalCandidate);
+                final PsiElement literalCandidate            = child.getFirstChild();
+                final StringLiteralExpression messageLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(literalCandidate);
                 if (null != messageLiteral) {
                     messages.put(messageLiteral, literalCandidate);
                 }
