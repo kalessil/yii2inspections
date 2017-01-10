@@ -11,8 +11,6 @@ The plugin is not yet published at plugins.jetbrains.com, though installation pr
 - In IDE: File -> Settings -> Plugins, below plugins list click *Install plugin from disk* and select the file
 - In IDE: File -> Invalidate Caches / Restart. Click the *Invalidate and restart* button.
 
-IDE will suggest restarting, do so. Now inspections and Quick-Fixes are available.
-
 Inspections
 ---
 - **Missing @property annotations**, checks property feature annotations (*ready*, *has QF*)
