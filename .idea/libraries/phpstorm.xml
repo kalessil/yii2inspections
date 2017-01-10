@@ -8,6 +8,7 @@
       <root url="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/plugins/php/lib/php.jar!/" />
       <root url="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/plugins/php/lib/resources_en.jar!/" />
       <root url="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/plugins/twig/lib/twig.jar!/" />
+      <root url="jar://$USER_HOME$/AppData/Roaming/JetBrains/PhpStorm 2016.2.1/plugins/twig/lib/resources_en.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
