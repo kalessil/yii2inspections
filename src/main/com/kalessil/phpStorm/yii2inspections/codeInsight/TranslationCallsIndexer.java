@@ -34,8 +34,7 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
     public static final ID<String, Void> identity  = ID.create("com.kalessil.phpStorm.yii2inspections.translation_usages");
     private final KeyDescriptor<String> descriptor = new EnumeratorStringDescriptor();
 
-    @SuppressWarnings("CanBeFinal")
-    static private Pattern regexTwigTranslateFilter = null;
+    final static private Pattern regexTwigTranslateFilter;
     static {
         regexTwigTranslateFilter
             = Pattern.compile(".*\\W((\\'[^\\']+\\')|(\\\"[^\\\"]+\\\"))\\|(t|translate)(\\(((\\'[^\\']+\\')|(\\\"[^\\\"]+\\\")))?\\W.*");
