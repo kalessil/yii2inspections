@@ -24,7 +24,7 @@ final public class TranslationCallsProcessUtil {
 
     /* Returns null if category is not clean or empty string literal or no reasonable messages were found*/
     @Nullable
-    static public ProcessingResult process(@NotNull MethodReference reference) {
+    static public ProcessingResult process(@NotNull MethodReference reference, boolean resolve) {
         final String name         = reference.getName();
         final PsiElement[] params = reference.getParameters();
         if (null == name || params.length < 2 || (!name.equals("t") && !(name.equals("registerTranslations")))) {
@@ -32,7 +32,7 @@ final public class TranslationCallsProcessUtil {
         }
 
         /* category needs to be resolved and without any injections */
-        final StringLiteralExpression categoryLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(params[0]);
+        final StringLiteralExpression categoryLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(params[0], resolve);
         if (null == categoryLiteral || null != categoryLiteral.getFirstPsiChild() || categoryLiteral.getTextLength() <= 2) {
             return null;
         }
@@ -40,7 +40,7 @@ final public class TranslationCallsProcessUtil {
         final Map<StringLiteralExpression, PsiElement> messages = new HashMap<>();
         if (name.equals("t")) {
             /* 2nd argument expected to be a string literal (possible with injections) */
-            final StringLiteralExpression messageLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(params[1]);
+            final StringLiteralExpression messageLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(params[1], resolve);
             if (null != messageLiteral && messageLiteral.getTextLength() > 2) {
                 messages.put(messageLiteral, params[1]);
             }
@@ -50,7 +50,7 @@ final public class TranslationCallsProcessUtil {
             /* 2nd argument expected to be an inline array with string literal (possible with injections) */
             for (PsiElement child : params[1].getChildren()) {
                 final PsiElement literalCandidate            = child.getFirstChild();
-                final StringLiteralExpression messageLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(literalCandidate);
+                final StringLiteralExpression messageLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(literalCandidate, resolve);
                 if (null != messageLiteral && messageLiteral.getTextLength() > 2) {
                     messages.put(messageLiteral, literalCandidate);
                 }

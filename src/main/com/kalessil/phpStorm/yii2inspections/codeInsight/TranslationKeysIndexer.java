@@ -93,6 +93,6 @@ final public class TranslationKeysIndexer extends FileBasedIndexExtension<String
 
     @Override
     public int getVersion() {
-        return 3;
+        return 100;
     }
 }

@@ -23,7 +23,7 @@ public class TranslationCallsProcessUtilTest extends CodeInsightFixtureTestCase 
             MethodReference call = PhpPsiElementFactory.createFromText(project, MethodReference.class, pattern);
             assertNotNull(pattern + ": incorrect pattern", call);
 
-            TranslationCallsProcessUtil.ProcessingResult messages = TranslationCallsProcessUtil.process(call);
+            TranslationCallsProcessUtil.ProcessingResult messages = TranslationCallsProcessUtil.process(call, false);
             assertNotNull(pattern + ": not processed correctly", messages);
 
             assertTrue(messages.getMessages().size() == patterns.get(pattern));
@@ -43,7 +43,7 @@ public class TranslationCallsProcessUtilTest extends CodeInsightFixtureTestCase 
             MethodReference call = PhpPsiElementFactory.createFromText(project, MethodReference.class, pattern);
             assertNotNull(pattern + ": incorrect pattern", call);
 
-            TranslationCallsProcessUtil.ProcessingResult messages = TranslationCallsProcessUtil.process(call);
+            TranslationCallsProcessUtil.ProcessingResult messages = TranslationCallsProcessUtil.process(call, false);
             assertNull(pattern + ": should be processed with null result", messages);
         }
     }

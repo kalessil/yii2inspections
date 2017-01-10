@@ -62,20 +62,13 @@ final public class TranslationsCorrectnessInspector extends PhpInspection {
             @Override
             public void visitPhpMethodReference(MethodReference reference) {
                 /* ensure that it's a target call; category is not empty and has no injections; we have messages */
-                TranslationCallsProcessUtil.ProcessingResult extracted = TranslationCallsProcessUtil.process(reference);
-                StringLiteralExpression categoryLiteral                = null == extracted ? null : extracted.getCategory();
-                if (
-                    null == categoryLiteral || 0 == extracted.getMessages().size() ||
-                    null != categoryLiteral.getFirstPsiChild() || categoryLiteral.getTextLength() <= 2
-                ) {
-                    if (null != extracted) {
-                        extracted.dispose();
-                    }
+                TranslationCallsProcessUtil.ProcessingResult extracted = TranslationCallsProcessUtil.process(reference, true);
+                if (null == extracted) {
                     return;
                 }
 
                 /* iterate found translations and validate correctness */
-                final String expectedFileName                           = categoryLiteral.getContents() + ".php";
+                final String expectedFileName                           = extracted.getCategory().getContents() + ".php";
                 final Map<StringLiteralExpression, PsiElement> messages = extracted.getMessages();
                 for (StringLiteralExpression literal : messages.keySet()) {
                     /* only quotes, no content presented */

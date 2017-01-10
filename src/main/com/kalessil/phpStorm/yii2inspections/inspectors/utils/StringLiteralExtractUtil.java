@@ -51,7 +51,7 @@ final public class StringLiteralExtractUtil {
     }
 
     @Nullable
-    public static StringLiteralExpression resolveAsStringLiteral(@Nullable PsiElement expression) {
+    public static StringLiteralExpression resolveAsStringLiteral(@Nullable PsiElement expression, boolean resolve) {
         if (null == expression) {
             return null;
         }
@@ -62,7 +62,7 @@ final public class StringLiteralExtractUtil {
         }
 
         if (expression instanceof FieldReference || expression instanceof ClassConstantReference) {
-            final Field fieldOrConstant = (Field) ((MemberReference) expression).resolve();
+            final Field fieldOrConstant = resolve ? (Field) ((MemberReference) expression).resolve() : null;
             if (null != fieldOrConstant && fieldOrConstant.getDefaultValue() instanceof StringLiteralExpression) {
                 return (StringLiteralExpression) fieldOrConstant.getDefaultValue();
             }

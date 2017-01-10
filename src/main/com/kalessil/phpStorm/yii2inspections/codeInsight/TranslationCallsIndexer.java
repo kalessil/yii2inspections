@@ -57,19 +57,12 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
             if (PhpFileType.INSTANCE == fileType) {
                 final Collection<MethodReference> calls = PsiTreeUtil.findChildrenOfType(fileContent.getPsiFile(), MethodReference.class);
                 for (MethodReference reference : calls) {
-                    final TranslationCallsProcessUtil.ProcessingResult extracted = TranslationCallsProcessUtil.process(reference);
-                    final StringLiteralExpression categoryLiteral                = null == extracted ? null : extracted.getCategory();
-                    if (
-                        null == categoryLiteral || 0 == extracted.getMessages().size() ||
-                        null != categoryLiteral.getFirstPsiChild() || categoryLiteral.getTextLength() <= 2
-                    ) {
-                        if (null != extracted) {
-                            extracted.dispose();
-                        }
+                    TranslationCallsProcessUtil.ProcessingResult extracted = TranslationCallsProcessUtil.process(reference, false);
+                    if (null == extracted) {
                         continue;
                     }
 
-                    final String category                                   = categoryLiteral.getContents();
+                    final String category                                   = extracted.getCategory().getContents();
                     final Map<StringLiteralExpression, PsiElement> messages = extracted.getMessages();
                     for (StringLiteralExpression literal : messages.keySet()) {
                         map.putIfAbsent(
@@ -134,6 +127,6 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
 
     @Override
     public int getVersion() {
-        return 5;
+        return 100;
     }
 }
