@@ -22,9 +22,6 @@
 
 
     <extensions defaultExtensionNs="com.intellij">
-        <!-- project configuration components -->
-        <projectConfigurable instance="com.kalessil.phpStorm.yii2inspections.Yii2InspectionsProjectConfig"/>
-
         <!-- code insight components -->
         <fileBasedIndex implementation="com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationKeysIndexer"/>
         <fileBasedIndex implementation="com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationCallsIndexer"/>
