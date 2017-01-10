@@ -7,7 +7,7 @@ Installation
 
 The plugin is not yet published at plugins.jetbrains.com, though installation process include 3 steps:
 - Install the *Twig support* plugin (to get twig files indexing)
-- Download **yii2inspections.jar** from the repository
+- Download **yii2inspections.jar** (temporary n/a) from the repository
 - In IDE: File -> Settings -> Plugins, below plugins list click *Install plugin from disk* and select the file
 
 IDE will suggest restarting, do so. Now inspections and Quick-Fixes are available.
