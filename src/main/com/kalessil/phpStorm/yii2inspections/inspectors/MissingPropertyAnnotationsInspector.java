@@ -29,6 +29,10 @@ import java.util.*;
  */
 
 final public class MissingPropertyAnnotationsInspector extends PhpInspection {
+    // configuration flags automatically saved by IDE
+    @SuppressWarnings("WeakerAccess")
+    public boolean REQUIRE_BOTH_GETTER_SETTER = false;
+
     private static final String messagePattern = "'%p%': properties needs to be annotated";
 
     @NotNull
@@ -88,30 +92,58 @@ final public class MissingPropertyAnnotationsInspector extends PhpInspection {
                 }
 
                 /* process extracted methods*/
-                for (String getter : mappedMethods.keySet()) {
-                    /* ensure getter has a complimentary setter */
-                    if (getter.length() <= 3 || !getter.startsWith("get")) {
-                        continue;
+                for (String candidate : mappedMethods.keySet()) {
+                    Method getterMethod = null;
+                    Method setterMethod = null;
+
+                    /* extract methods: get (looks up and extracts set), set (looks up get and skipped if found) */
+                    if (candidate.startsWith("get")) {
+                        getterMethod = mappedMethods.get(candidate);
+                        if (getterMethod.isStatic() || 0 != getterMethod.getParameters().length) {
+                            getterMethod = null;
+                        }
+
+                        final String complimentarySetter = candidate.replaceAll("^get", "set");
+                        if (mappedMethods.containsKey(complimentarySetter)) {
+                            setterMethod = mappedMethods.get(complimentarySetter);
+                            if (setterMethod.isStatic() || 0 != setterMethod.getParameters().length) {
+                                setterMethod = null;
+                            }
+
+                        }
                     }
-                    final String setter = getter.replaceAll("^get", "set");
-                    if (!mappedMethods.containsKey(setter)) {
+                    if (candidate.startsWith("set")) {
+                        setterMethod = mappedMethods.get(candidate);
+                        if (setterMethod.isStatic() || 0 != setterMethod.getParameters().length) {
+                            setterMethod = null;
+                        }
+
+                        final String complimentaryGetter = candidate.replaceAll("^set", "get");
+                        if (mappedMethods.containsKey(complimentaryGetter)) {
+                            continue;
+                        }
+                    }
+
+                    /* ensure that strategies are reachable */
+                    if (
+                        (null == getterMethod && null == setterMethod) ||
+                        (REQUIRE_BOTH_GETTER_SETTER && (null == getterMethod || null == setterMethod))
+                    ) {
                         continue;
                     }
 
-                    /* additional checks: get has no parameters, complimentary methods should not be static */
-                    final Method getterMethod = mappedMethods.get(getter);
-                    final Method setterMethod = mappedMethods.get(setter);
-                    if (setterMethod.isStatic() || getterMethod.isStatic() || 0 != getterMethod.getParameters().length) {
-                        continue;
-                    }
 
                     /* store property and it's types */
                     final Set<String> propertyTypesFqns = new HashSet<>();
 
-                    propertyTypesFqns.addAll(getterMethod.getType().filterUnknown().getTypes());
-                    final Parameter[] setterParams = setterMethod.getParameters();
-                    if (setterParams.length > 0) {
-                        propertyTypesFqns.addAll(setterParams[0].getType().filterUnknown().getTypes());
+                    if (null != getterMethod) {
+                        propertyTypesFqns.addAll(getterMethod.getType().filterUnknown().getTypes());
+                    }
+                    if (null != setterMethod) {
+                        final Parameter[] setterParams = setterMethod.getParameters();
+                        if (setterParams.length > 0) {
+                            propertyTypesFqns.addAll(setterParams[0].getType().filterUnknown().getTypes());
+                        }
                     }
 
                     /* drop preceding \ in core types */
@@ -127,7 +159,7 @@ final public class MissingPropertyAnnotationsInspector extends PhpInspection {
                     propertyTypesFqns.clear();
 
                     final String typesAsString = propertyTypes.isEmpty() ? "mixed" : String.join("|", propertyTypes);
-                    properties.put(StringUtils.uncapitalize(getter.replaceAll("^get", "")), typesAsString);
+                    properties.put(StringUtils.uncapitalize(candidate.replaceAll("^get", "")), typesAsString);
                 }
 
                 /* exclude annotated properties: lazy bulk operation */
