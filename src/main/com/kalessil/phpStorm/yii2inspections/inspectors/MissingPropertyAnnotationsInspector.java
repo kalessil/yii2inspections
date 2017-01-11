@@ -72,7 +72,8 @@ final public class MissingPropertyAnnotationsInspector extends PhpInspection {
                 /* iterate get methods, find matching set methods */
                 final Map<String, String> props = this.findPropertyCandidates(clazz);
                 if (props.size() > 0) {
-                    final String message = messagePattern.replace("%p%", String.join("', '", props.keySet()));
+                    List<String> names = new ArrayList<>(props.keySet()); Collections.sort(names);
+                    final String message = messagePattern.replace("%p%", String.join("', '", names));
                     holder.registerProblem(nameNode, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(props));
                 }
             }

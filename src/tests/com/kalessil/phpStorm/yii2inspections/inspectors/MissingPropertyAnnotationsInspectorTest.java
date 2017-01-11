@@ -11,4 +11,9 @@ final public class MissingPropertyAnnotationsInspectorTest extends CodeInsightFi
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
     }
+    public void testIfFindsAllPatternsPartialApproach() {
+        myFixture.configureByFile("fixtures/property-tags-partial.php");
+        myFixture.enableInspections(MissingPropertyAnnotationsInspector.class);
+        myFixture.testHighlighting(true, false, true);
+    }
 }
