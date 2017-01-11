@@ -36,9 +36,15 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
     private final KeyDescriptor<String> descriptor = new EnumeratorStringDescriptor();
 
     final static private Pattern regexTwigTranslateFilter;
+    final static private Pattern regexTwigRegisterTranslationsMessages;
+    final static private Pattern regexTwigRegisterTranslationsMessage;
     static {
-        regexTwigTranslateFilter
+        regexTwigTranslateFilter              // <- groups 1,6 are needed
             = Pattern.compile(".*\\W((\\'[^\\']+\\')|(\\\"[^\\\"]+\\\"))\\|(t|translate)(\\(((\\'[^\\']+\\')|(\\\"[^\\\"]+\\\")))?\\W.*");
+        regexTwigRegisterTranslationsMessages // <- group 2 is needed
+            = Pattern.compile("(?:\\{\\%\\s+do\\s+view\\.registerTranslations\\s*\\(\\s*)(\\'[^\\']+\\'|\\\"[^\\\"]+\\\")(?:\\s*\\,\\s*)(\\[\\s*(?:(?:\\'[^\\']+\\'|\\\"[^\\\"]+\\\")(?:\\s*\\,\\s*)?)+\\s*\\])(?:\\s*\\)\\s+\\%\\})");
+        regexTwigRegisterTranslationsMessage  // <- group 1 is needed
+            = Pattern.compile("(\\'[^\\']+\\'|\\\"[^\\\"]+\\\")(?:\\s*\\,\\s*|\\s*\\])?");
     }
 
     @NotNull
