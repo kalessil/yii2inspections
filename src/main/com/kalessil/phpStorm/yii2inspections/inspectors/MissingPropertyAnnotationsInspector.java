@@ -106,7 +106,7 @@ final public class MissingPropertyAnnotationsInspector extends PhpInspection {
                         final String complimentarySetter = candidate.replaceAll("^get", "set");
                         if (mappedMethods.containsKey(complimentarySetter)) {
                             setterMethod = mappedMethods.get(complimentarySetter);
-                            if (setterMethod.isStatic() || 0 != setterMethod.getParameters().length) {
+                            if (setterMethod.isStatic() || 0 == setterMethod.getParameters().length) {
                                 setterMethod = null;
                             }
 
