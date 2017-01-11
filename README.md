@@ -13,7 +13,7 @@ The plugin is not yet published at plugins.jetbrains.com, though installation pr
 
 Inspections
 ---
-- **Missing @property annotations**, checks property feature annotations (*ready*, *has QF*, *has Settings*)
-- **Translation message correctness**, checks if messages have translations and follows best practices (*ready*, *has Settings*)
-- **Missing translations**, checks translation files for missing translations (*ready*, *has QF*)
-- **Unused translations**, checks translation files for unused translations (*ready*, *has QF*)
+- **Missing @property annotations**, checks property feature annotations (*has QF*, *has Settings*)
+- **Translation message correctness**, checks if messages have translations and follows best practices (*has Settings*)
+- **Missing translations**, checks translation files for missing translations (*has QF*)
+- **Unused translations**, checks translation files for unused translations (*has QF*)
