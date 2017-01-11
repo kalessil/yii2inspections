@@ -115,7 +115,7 @@ final public class MissingPropertyAnnotationsInspector extends PhpInspection {
                     }
                     if (candidate.startsWith("set")) {
                         setterMethod = mappedMethods.get(candidate);
-                        if (setterMethod.isStatic() || 0 != setterMethod.getParameters().length) {
+                        if (setterMethod.isStatic() || 0 == setterMethod.getParameters().length) {
                             setterMethod = null;
                         }
 
@@ -160,7 +160,7 @@ final public class MissingPropertyAnnotationsInspector extends PhpInspection {
                     propertyTypesFqns.clear();
 
                     final String typesAsString = propertyTypes.isEmpty() ? "mixed" : String.join("|", propertyTypes);
-                    properties.put(StringUtils.uncapitalize(candidate.replaceAll("^get", "")), typesAsString);
+                    properties.put(StringUtils.uncapitalize(candidate.replaceAll("^(get|set)", "")), typesAsString);
                 }
 
                 /* exclude annotated properties: lazy bulk operation */

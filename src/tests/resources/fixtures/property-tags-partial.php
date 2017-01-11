@@ -5,10 +5,10 @@ namespace yii\base;
 class Object {}
 
 class ClassNeedsNoProperties extends Object { // <-- all false-positives
-    static public function setAuthor()        {}
-    public function setPrice($price)          {}
-    public function getBook($default)         {}
-    static public function getQuantity()      {}
+    static public function setAuthor()        {} // <- static
+    public function setPrice()                {} // <- missing argument
+    public function getBook($default)         {} // <- extra argument
+    static public function getQuantity()      {} // <- static
 }
 
 class <weak_warning descr="'author', 'book': properties needs to be annotated">ClassNeedsProperties1</weak_warning>
