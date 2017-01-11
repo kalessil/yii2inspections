@@ -14,9 +14,11 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.yii2inspections.inspectors.utils.InheritanceChainExtractUtil;
 import com.kalessil.phpStorm.yii2inspections.inspectors.utils.NamedElementUtil;
+import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.*;
 
 /*
@@ -264,6 +266,29 @@ final public class MissingPropertyAnnotationsInspector extends PhpInspection {
                     lines.clear();
                 }
             }
+        }
+    }
+
+    public JComponent createOptionsPanel() {
+        return (new MissingPropertyAnnotationsInspector.OptionsPanel()).getComponent();
+    }
+
+    private class OptionsPanel {
+        final private JPanel optionsPanel;
+
+        final private JCheckBox reportNonAsciiCodes;
+
+        OptionsPanel() {
+            optionsPanel = new JPanel();
+            optionsPanel.setLayout(new MigLayout());
+
+            reportNonAsciiCodes = new JCheckBox("Analyze only complimentary get/set methods", REQUIRE_BOTH_GETTER_SETTER);
+            reportNonAsciiCodes.addChangeListener(e -> REQUIRE_BOTH_GETTER_SETTER = reportNonAsciiCodes.isSelected());
+            optionsPanel.add(reportNonAsciiCodes, "wrap");
+        }
+
+        JPanel getComponent() {
+            return optionsPanel;
         }
     }
 }
