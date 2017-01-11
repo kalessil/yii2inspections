@@ -15,14 +15,21 @@ class <weak_warning descr="'author': properties needs to be annotated">ClassNeed
     public function setAuthor($author) {}
 
     public function getBook()          {}
-    public function setBook($book)     {}
+    public function setBook()          {}
 }
 
-class ClassNeedsNoPropertiesHasStatic extends Object {
-    public static function getAuthor()        {}
+class ClassNeedsNoPropertiesHasStatic1 extends Object {
+    public function getAuthor()               {}
     public static function setAuthor($author) {}
+}
+class ClassNeedsNoPropertiesHasStatic2 extends Object {
+    public static function getAuthor()        {}
+    public function setAuthor($author)        {}
 }
 
 class ClassNeedsNoPropertiesHasOnlyGet extends Object {
-    public function getAuthor() {}
+    public function getAuthor()               {}
+}
+class ClassNeedsNoPropertiesHasOnlySet extends Object {
+    public function setAuthor($author)        {}
 }

@@ -7,7 +7,7 @@ final public class MissingPropertyAnnotationsInspectorTest extends CodeInsightFi
         MissingPropertyAnnotationsInspector inspector = new MissingPropertyAnnotationsInspector();
         inspector.REQUIRE_BOTH_GETTER_SETTER = true;
 
-        myFixture.configureByFile("fixtures/property-tags.php");
+        myFixture.configureByFile("fixtures/property-tags-complimentary.php");
         myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
     }
