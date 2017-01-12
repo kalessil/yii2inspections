@@ -10,11 +10,10 @@ Supports Yii 2+ and Craft CMS 3+, see list of inspections below.
 Installation
 ---
 
-The plugin is not yet published at plugins.jetbrains.com, though installation process include 4 steps:
-- Install the *Twig support* plugin (to get twig files indexing)
-- Download **yii2inspections.jar** from the repository
-- In IDE: File -> Settings -> Plugins, below plugins list click *Install plugin from disk* and select the file
-- In IDE: File -> Invalidate Caches / Restart. Click the *Invalidate and restart* button.
+Regular installation process includes 3 steps:
+- Install the *Twig support* plugin
+- Navigate to *File -> Settings -> Plugins* and click *Browse Repositories*. New window will popup listing available plugins. 
+- Type *Yii2 Inspections* into the top search field and install the plugin. Click *OK* buttons on both open windows.
 
 Inspections
 ---
