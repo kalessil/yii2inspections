@@ -11,9 +11,9 @@ Installation
 ---
 
 Regular installation process includes 3 steps:
-- Install the *Twig support* plugin
 - Navigate to *File -> Settings -> Plugins* and click *Browse Repositories*. New window will popup listing available plugins. 
-- Type *Yii2 Inspections* into the top search field and install the plugin. Click *OK* buttons on both open windows.
+- Type *Yii2 Inspections* into the top search field and install the plugin. Same for *Twig support* plugin (required dependency).  
+- Click *OK* buttons on both open windows, restart as IDE suggests. That's it.
 
 Inspections
 ---
