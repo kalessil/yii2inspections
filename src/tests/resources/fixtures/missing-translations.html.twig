@@ -1,3 +1,8 @@
 
 {{ 'Used message in TWIG'|t('missing') }}
-{{ 'Missing translation from TWIG'|t('missing') }}
+
+{{ 'Missing translation from TWIG (t)'|t('missing') }}
+{% do view.registerTranslations('missing', [
+	'Missing translation from TWIG (registerTranslations)',
+	'Used message in TWIG',
+]) %}

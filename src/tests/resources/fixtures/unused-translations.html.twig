@@ -1,2 +1,7 @@
 
-{{ 'Used message from TWIG'|translate('unused') }}
+{{ 'Used message from TWIG (t)'|translate('unused') }}
+
+{% do view.registerTranslations('unused', [
+	'Used message from TWIG (registerTranslations)',
+	'', '', ''
+]) %}
