@@ -1,3 +1,8 @@
+[![Version](http://phpstorm.espend.de/badge/9400/version)](https://plugins.jetbrains.com/plugin/9400)
+[![Downloads](http://phpstorm.espend.de/badge/9400/downloads)](https://plugins.jetbrains.com/plugin/9400)
+[![Downloads last month](http://phpstorm.espend.de/badge/9400/last-month)](https://plugins.jetbrains.com/plugin/9400)
+
+
 Yii2 Inspections for PhpStorm/IdeaUltimate
 ---
 Supports Yii 2+ and Craft CMS 3+, see list of inspections below.
