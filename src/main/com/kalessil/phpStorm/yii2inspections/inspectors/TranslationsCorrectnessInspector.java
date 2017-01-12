@@ -9,20 +9,20 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.inspections.PhpInspection;
-import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.jetbrains.php.util.PhpStringUtil;
 import com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationKeysIndexer;
-import com.kalessil.phpStorm.yii2inspections.inspectors.utils.StringLiteralExtractUtil;
 import com.kalessil.phpStorm.yii2inspections.utils.TranslationCallsProcessUtil;
 import net.miginfocom.swing.MigLayout;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /*

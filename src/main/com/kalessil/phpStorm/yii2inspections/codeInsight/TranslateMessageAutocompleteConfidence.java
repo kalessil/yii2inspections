@@ -1,9 +1,6 @@
 package com.kalessil.phpStorm.yii2inspections.codeInsight;
 
 import com.intellij.codeInsight.completion.CompletionConfidence;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.ThreeState;
