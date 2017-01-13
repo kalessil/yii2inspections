@@ -2,17 +2,11 @@ package com.kalessil.phpStorm.yii2inspections.codeInsight;
 
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
-import com.intellij.util.Processor;
 import com.intellij.util.indexing.FileBasedIndex;
-import com.intellij.util.indexing.FileBasedIndexImpl;
-import com.jetbrains.php.PhpIcons;
 import com.jetbrains.php.lang.PhpLanguage;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
@@ -32,30 +26,25 @@ public class TranslationAutocompleteContributor extends CompletionContributor {
                     return;
                 }
 
-                /* autocomplete only categories only when they are empty */
-                final StringLiteralExpression parameter = (StringLiteralExpression) target.getParent();
-                if (parameter.getContents().length() != 0) {
-                    return;
-                }
                 /* suggest only to target code structure */
-                final MethodReference reference = (MethodReference) parameter.getParent().getParent();
-                final String name               = reference.getName();
-                final PsiElement[] params       = reference.getParameters();
-                if (null == name || params.length < 2 || (!name.equals("t") && !(name.equals("registerTranslations")))) {
+                final StringLiteralExpression parameter = (StringLiteralExpression) target.getParent();
+                final MethodReference reference         = (MethodReference) parameter.getParent().getParent();
+                final String name                       = reference.getName();
+                final PsiElement[] params               = reference.getParameters();
+                if (null == name || 0 == params.length || (!name.equals("t") && !(name.equals("registerTranslations")))) {
                     return;
                 }
 
                 /* generate proposals */
                 final boolean autocompleteCategory = params[0] == parameter;
-                final boolean autocompleteMessage  = params[1] == parameter;
+                final boolean autocompleteMessage  = params.length > 1 && params[1] == parameter;
                 if (autocompleteCategory || autocompleteMessage) {
                     /* extract uniques messages for faster processing */
                     final Set<String> suggestions = new HashSet<>();
                     final Set<String> messages
                         = new HashSet<>(FileBasedIndex.getInstance().getAllKeys(TranslationCallsIndexer.identity, target.getProject()));
 
-                    final String prefix
-                        = params[0] instanceof StringLiteralExpression ? ((StringLiteralExpression) params[0]).getContents() + "|" : "|";
+                    final String prefix = autocompleteMessage ? ((StringLiteralExpression) params[0]).getContents() + "|" : null;
                     for (String prefixedMessage : messages) {
                         if (autocompleteCategory) {
                             suggestions.add(prefixedMessage.substring(0, prefixedMessage.indexOf('|')));
@@ -92,9 +81,9 @@ public class TranslationAutocompleteContributor extends CompletionContributor {
 
     public boolean invokeAutoPopup(@NotNull PsiElement position, char typeChar) {
         /* validate the autocompletion target */
-//        if (!(position.getParent() instanceof StringLiteralExpression)) {
-//            return false;
-//        }
+        if (position instanceof StringLiteralExpression || position.getParent() instanceof StringLiteralExpression) {
+            return true;
+        }
 
         return true;
     }

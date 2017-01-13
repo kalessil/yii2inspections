@@ -2,7 +2,7 @@
     <!-- general information -->
     <id>com.kalessil.phpStorm.yii2inspections</id>
     <name>Yii2 Inspections</name>
-    <version>1.0.0-beta</version>
+    <version>1.0.1-beta</version>
     <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
     <!-- description and change notes -->
@@ -10,12 +10,9 @@
 Yii 2 and Craft CMS 3 Inspections for PhpStorm/IdeaUltimate
     ]]></description>
     <change-notes><![CDATA[
-12 Jan 2017: version 1.0.0 released<br>
+13 Jan 2017: new features<br>
 <br>
-- Missing @property annotations: implemented;<br/>
-- Translation message correctness: implemented;<br/>
-- Missing translations: implemented;<br/>
-- Unused translations: implemented;<br/>
+- Autocompletion for categories and messages added;<br/>
 <br/>
 <hr/>
     ]]>
