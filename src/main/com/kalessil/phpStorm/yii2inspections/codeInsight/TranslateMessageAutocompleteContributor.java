@@ -38,4 +38,6 @@ public class TranslateMessageAutocompleteContributor extends CompletionContribut
 
         extend(CompletionType.BASIC, filter, provider);
     }
+
+    // public boolean invokeAutoPopup(@NotNull PsiElement position, char typeChar) {
 }
