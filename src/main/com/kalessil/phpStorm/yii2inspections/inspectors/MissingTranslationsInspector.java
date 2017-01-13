@@ -71,8 +71,8 @@ final public class MissingTranslationsInspector extends PhpInspection {
                 }
 
                 /* search globally for missing translations */
-                final Collection<String> usages = FileBasedIndex.getInstance()
-                        .getAllKeys(TranslationCallsIndexer.identity, expression.getProject());
+                final Set<String> usages
+                    = new HashSet<>(FileBasedIndex.getInstance().getAllKeys(TranslationCallsIndexer.identity, expression.getProject()));
                 if (usages.size() > 0) {
                     final Set<String> missing = new HashSet<>();
 
