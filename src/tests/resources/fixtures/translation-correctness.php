@@ -17,7 +17,8 @@ function stringsDiscoveryWrapper($view) {
     ]);
 
     /* false-positives */
-    Yii::t('app', 'Existing translation');
+    Yii::t('app',             'Existing translation');
+    Yii::t('com/company/app', 'Existing translation');
     Yii::t('app', 'With "');
     Yii::t('app', "With \"");
     Yii::t('app', "With '");

@@ -67,8 +67,15 @@ final public class TranslationsCorrectnessInspector extends PhpInspection {
                     return;
                 }
 
+                /* handle `category` and `category/subcategory` cases */
+                String categoryForFileName = extracted.getCategory().getContents();
+                if (-1 != categoryForFileName.indexOf('/')) {
+                    categoryForFileName
+                        = categoryForFileName.substring(1 + categoryForFileName.lastIndexOf('/'), categoryForFileName.length());
+                }
+                final String expectedFileName = categoryForFileName + ".php";
+
                 /* iterate found translations and validate correctness */
-                final String expectedFileName                           = extracted.getCategory().getContents() + ".php";
                 final Map<StringLiteralExpression, PsiElement> messages = extracted.getMessages();
                 for (StringLiteralExpression literal : messages.keySet()) {
                     /* only quotes, no content presented */
