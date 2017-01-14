@@ -6,7 +6,6 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
@@ -27,7 +26,6 @@ import com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationCallsIndexer
 import com.kalessil.phpStorm.yii2inspections.inspectors.utils.TranslationProviderUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -65,28 +63,34 @@ final public class UnusedTranslationsInspector extends PhpInspection {
 
                 /* iterate defined translations and report unused */
                 final String searchPrefix = file.getName().replaceAll("\\.php$", "|");
+                final Project project     = expression.getProject();
                 for (ArrayHashElement pair : expression.getHashElements()) {
                     final PhpPsiElement key = pair.getKey();
                     if (!(key instanceof StringLiteralExpression)) {
                         continue;
                     }
 
-                    final Set<VirtualFile> consumers = new HashSet<>();
-
                     final StringLiteralExpression literal = (StringLiteralExpression) key;
-                    final boolean isSingleQuote           = literal.isSingleQuote();
-                    final String messageToFind            = PhpStringUtil.unescapeText(literal.getContents(), isSingleQuote);
-                    final Set<String> entry    = new HashSet<>(Collections.singletonList(searchPrefix + messageToFind));
-                    FileBasedIndex.getInstance()
-                        .getFilesWithKey(TranslationCallsIndexer.identity, entry, virtualFile -> {
-                            consumers.add(virtualFile);
-                            return true;
-                        }, theScope);
+                    final String messageToFind            = PhpStringUtil.unescapeText(literal.getContents(), literal.isSingleQuote());
+                    final String regularEntry             = searchPrefix + messageToFind;
 
-                    if (0 == consumers.size()) {
+                    final Set<String> usages
+                        = new HashSet<>(FileBasedIndex.getInstance().getAllKeys(TranslationCallsIndexer.identity, project));
+                    boolean found = usages.contains(regularEntry);
+                    if (!found && usages.size() > 0) {
+                        final String slashedCategoryEntry = "/" + regularEntry;
+                        for (String usage : usages) {
+                            if (usage.endsWith(slashedCategoryEntry)) {
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    usages.clear();
+
+                    if (!found) {
                         holder.registerProblem(pair, messagePattern, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new TheLocalFix());
                     }
-                    consumers.clear();
                 }
             }
         };

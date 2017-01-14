@@ -23,7 +23,6 @@ import com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationCallsIndexer
 import com.kalessil.phpStorm.yii2inspections.inspectors.utils.TranslationProviderUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
