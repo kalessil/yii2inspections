@@ -81,10 +81,6 @@ public class TranslationAutocompleteContributor extends CompletionContributor {
 
     public boolean invokeAutoPopup(@NotNull PsiElement position, char typeChar) {
         /* validate the autocompletion target */
-        if (position instanceof StringLiteralExpression || position.getParent() instanceof StringLiteralExpression) {
-            return true;
-        }
-
-        return true;
+        return position instanceof StringLiteralExpression || position.getParent() instanceof StringLiteralExpression;
     }
 }
