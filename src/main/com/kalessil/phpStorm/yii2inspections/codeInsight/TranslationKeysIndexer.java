@@ -52,8 +52,9 @@ final public class TranslationKeysIndexer extends FileBasedIndexExtension<String
                 if (key instanceof StringLiteralExpression) {
                     final StringLiteralExpression literal = (StringLiteralExpression) key;
                     final String message                  = literal.getContents();
-                    final boolean isSingleQuote           = literal.isSingleQuote();
-                    map.putIfAbsent(PhpStringUtil.unescapeText(message, isSingleQuote), null);
+                    if (message.length() > 0) {
+                        map.putIfAbsent(PhpStringUtil.unescapeText(message, literal.isSingleQuote()), null);
+                    }
                 }
             }
 
@@ -93,6 +94,6 @@ final public class TranslationKeysIndexer extends FileBasedIndexExtension<String
 
     @Override
     public int getVersion() {
-        return 1;
+        return 2;
     }
 }

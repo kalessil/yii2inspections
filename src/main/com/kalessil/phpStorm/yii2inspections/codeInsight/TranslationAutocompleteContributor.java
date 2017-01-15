@@ -52,7 +52,7 @@ public class TranslationAutocompleteContributor extends CompletionContributor {
                         }
 
                         if (prefixedMessage.startsWith(prefix)) {
-                            suggestions.add(prefixedMessage.replace(prefix, ""));
+                            suggestions.add(prefixedMessage.substring(1 + prefixedMessage.indexOf('|')));
                         }
                     }
                     messages.clear();
