@@ -2,7 +2,7 @@
     <!-- general information -->
     <id>com.kalessil.phpStorm.yii2inspections</id>
     <name>Yii2 Inspections</name>
-    <version>1.0.2-beta</version>
+    <version>1.0.0</version>
     <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
     <!-- description and change notes -->
@@ -10,10 +10,10 @@
 Yii 2 and Craft CMS 3 Inspections for PhpStorm/IdeaUltimate
     ]]></description>
     <change-notes><![CDATA[
-14 Jan 2017: bug-fixes<br>
+29 Jan 2017: bug-fixes, new settings<br>
 <br>
-- Autocompletion happens only inside translation calls;<br/>
-- Resolved false-positives when using 'category/subcategory' notation;<br/>
+- Translation message correctness: added a new option (Report unknown/untranslated messages);<br/>
+- Autocompletion: fixed Java cast exceptions, performance tweaks;<br/>
 <br/>
 <hr/>
     ]]>
