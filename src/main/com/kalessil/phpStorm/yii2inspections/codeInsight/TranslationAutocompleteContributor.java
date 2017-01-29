@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.PhpLanguage;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.kalessil.phpStorm.yii2inspections.inspectors.utils.StringLiteralExtractUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -39,12 +40,20 @@ public class TranslationAutocompleteContributor extends CompletionContributor {
                 final boolean autocompleteCategory = params[0] == parameter;
                 final boolean autocompleteMessage  = params.length > 1 && params[1] == parameter;
                 if (autocompleteCategory || autocompleteMessage) {
+                    StringLiteralExpression category = null;
+                    if (autocompleteMessage) {
+                        category = StringLiteralExtractUtil.resolveAsStringLiteral(params[0], true);
+                        if (null == category) {
+                            return;
+                        }
+                    }
+
                     /* extract uniques messages for faster processing */
                     final Set<String> suggestions = new HashSet<>();
                     final Set<String> messages
                         = new HashSet<>(FileBasedIndex.getInstance().getAllKeys(TranslationCallsIndexer.identity, target.getProject()));
 
-                    final String prefix = autocompleteMessage ? ((StringLiteralExpression) params[0]).getContents() + "|" : null;
+                    final String prefix = autocompleteMessage ? category.getContents() + "|" : null;
                     for (String prefixedMessage : messages) {
                         if (autocompleteCategory) {
                             suggestions.add(prefixedMessage.substring(0, prefixedMessage.indexOf('|')));
@@ -60,8 +69,8 @@ public class TranslationAutocompleteContributor extends CompletionContributor {
                     if (suggestions.size() > 0){
                         final List<String> sortedSuggestions = new ArrayList<>(suggestions);
                         Collections.sort(sortedSuggestions);
-                        for (String category : sortedSuggestions) {
-                            completionResultSet.addElement(LookupElementBuilder.create(category));
+                        for (String suggestion : sortedSuggestions) {
+                            completionResultSet.addElement(LookupElementBuilder.create(suggestion));
                         }
 
                         suggestions.clear();
