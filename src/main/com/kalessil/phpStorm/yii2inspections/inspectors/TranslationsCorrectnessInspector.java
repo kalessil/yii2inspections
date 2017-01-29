@@ -40,6 +40,8 @@ final public class TranslationsCorrectnessInspector extends PhpInspection {
     public boolean REPORT_NONASCII_CHARACTERS = true;
     @SuppressWarnings("WeakerAccess")
     public boolean REPORT_INJECTIONS = true;
+    @SuppressWarnings("WeakerAccess")
+    public boolean REPORT_UNKNOWN_TRANSLATIONS = true;
 
     private static final String messageNoTranslations = "The message doesn't have any translations or doesn't belong to the category";
     private static final String messageNonAscii       = "Usage of any characters out of ASCII range is not recommended.";
@@ -112,7 +114,7 @@ final public class TranslationsCorrectnessInspector extends PhpInspection {
                             }, theScope);
 
                     /* report found cases */
-                    if (0 == providers.size()) {
+                    if (REPORT_UNKNOWN_TRANSLATIONS && 0 == providers.size()) {
                         holder.registerProblem(reportingTarget, messageNoTranslations, ProblemHighlightType.WEAK_WARNING);
                     }
                     providers.clear();
@@ -132,10 +134,15 @@ final public class TranslationsCorrectnessInspector extends PhpInspection {
 
         final private JCheckBox reportNonAsciiCodes;
         final private JCheckBox reportInjections;
+        final private JCheckBox reportUnknownTranslations;
 
         OptionsPanel() {
             optionsPanel = new JPanel();
             optionsPanel.setLayout(new MigLayout());
+
+            reportUnknownTranslations = new JCheckBox("Report unknown/untranslated messages", REPORT_UNKNOWN_TRANSLATIONS);
+            reportUnknownTranslations.addChangeListener(e -> REPORT_UNKNOWN_TRANSLATIONS = reportUnknownTranslations.isSelected());
+            optionsPanel.add(reportUnknownTranslations, "wrap");
 
             reportNonAsciiCodes = new JCheckBox("Report non-ASCII characters usage", REPORT_NONASCII_CHARACTERS);
             reportNonAsciiCodes.addChangeListener(e -> REPORT_NONASCII_CHARACTERS = reportNonAsciiCodes.isSelected());
