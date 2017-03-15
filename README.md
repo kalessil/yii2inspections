@@ -6,6 +6,7 @@
 Yii2 Inspections for PhpStorm/IdeaUltimate
 ---
 Supports Yii 2+ and Craft CMS 3+, see list of inspections below.
+
 The plugin has been funded by the [Pixel and Tonic](https://github.com/pixelandtonic), the company behind Craft CMS. Our special thank  you to [Brandon Kelly](https://github.com/brandonkelly) and [Alexander Makarov](https://github.com/samdark), who gave us valuable feedback on early development stages =)
 
 Installation
