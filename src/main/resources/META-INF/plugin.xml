@@ -2,7 +2,7 @@
     <!-- general information -->
     <id>com.kalessil.phpStorm.yii2inspections</id>
     <name>Yii2 Inspections</name>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
     <!-- description and change notes -->
@@ -10,9 +10,9 @@
 Yii 2 and Craft CMS 3 Inspections for PhpStorm/IdeaUltimate
     ]]></description>
     <change-notes><![CDATA[
-6 Feb 2017: bug-fixes<br>
+07 Nov 2017: bug-fixes<br>
 <br>
-- Fixed infinite indexing in some projects (regex catastrophic backtracking);<br/>
+- Support for \yii\base\BaseObject class;<br/>
 <br/>
 <hr/>
     ]]>
