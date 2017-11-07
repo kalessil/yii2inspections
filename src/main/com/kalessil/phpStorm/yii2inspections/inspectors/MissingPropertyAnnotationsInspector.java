@@ -37,6 +37,12 @@ final public class MissingPropertyAnnotationsInspector extends PhpInspection {
 
     private static final String messagePattern = "'%p%': properties needs to be annotated";
 
+    private static final Set<String> baseObjectClasses = new HashSet<>();
+    static {
+        baseObjectClasses.add("\\yii\\base\\Object");
+        baseObjectClasses.add("\\yii\\base\\BaseObject");
+    }
+
     @NotNull
     public String getShortName() {
         return "MissingPropertyAnnotationsInspection";
@@ -57,9 +63,9 @@ final public class MissingPropertyAnnotationsInspector extends PhpInspection {
                 /* check if the class inherited from yii\base\Object */
                 boolean supportsPropertyFeature = false;
                 final Set<PhpClass> parents     = InheritanceChainExtractUtil.collect(clazz);
-                if (parents.size() > 0) {
-                    for (PhpClass parent : parents) {
-                        if (parent.getFQN().equals("\\yii\\base\\Object")) {
+                if (!parents.isEmpty()) {
+                    for (final PhpClass parent : parents) {
+                        if (baseObjectClasses.contains(parent.getFQN())) {
                             supportsPropertyFeature = true;
                             break;
                         }
