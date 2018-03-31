@@ -10,6 +10,7 @@ import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.php.lang.PhpLanguage;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
+import com.jetbrains.php.lang.psi.elements.ParameterList;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.yii2inspections.inspectors.utils.StringLiteralExtractUtil;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +21,11 @@ public class TranslationAutocompleteContributor extends CompletionContributor {
     public TranslationAutocompleteContributor() {
         final CompletionProvider<CompletionParameters> provider = new CompletionProvider<CompletionParameters>() {
             @Override
-            protected void addCompletions(@NotNull CompletionParameters completionParameters, ProcessingContext processingContext, @NotNull CompletionResultSet completionResultSet) {
+            protected void addCompletions(
+                    @NotNull CompletionParameters completionParameters,
+                    ProcessingContext processingContext,
+                    @NotNull CompletionResultSet completionResultSet
+            ) {
                 /* validate the autocompletion target */
                 final PsiElement target = completionParameters.getOriginalPosition();
                 if (null == target || !(target.getParent() instanceof StringLiteralExpression)) {
@@ -90,6 +95,7 @@ public class TranslationAutocompleteContributor extends CompletionContributor {
 
     public boolean invokeAutoPopup(@NotNull PsiElement position, char typeChar) {
         /* validate the autocompletion target */
-        return position instanceof StringLiteralExpression || position.getParent() instanceof StringLiteralExpression;
+        final PsiElement candidate = position instanceof StringLiteralExpression ? position : position.getParent();
+        return candidate instanceof StringLiteralExpression && candidate.getParent() instanceof ParameterList;
     }
 }
