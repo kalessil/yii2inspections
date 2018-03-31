@@ -123,7 +123,7 @@ final public class MissingPropertyAnnotationsInspector extends PhpInspection {
                     }
                     if (candidate.startsWith("set")) {
                         setterMethod = mappedMethods.get(candidate);
-                        if (setterMethod.isStatic() || 0 == setterMethod.getParameters().length) {
+                        if (setterMethod.isStatic() || setterMethod.getParameters().length != 1) {
                             setterMethod = null;
                         }
 
