@@ -23,41 +23,38 @@ import java.util.Map;
  * file that was distributed with this source code.
  */
 
-final public class TranslationKeysIndexer extends FileBasedIndexExtension<String, Void> {
-    public static final ID<String, Void> identity  = ID.create("com.kalessil.phpStorm.yii2inspections.translation_keys");
-    private final KeyDescriptor<String> descriptor = new EnumeratorStringDescriptor();
+final public class TranslationKeysIndexer extends FileBasedIndexExtension<String, String> {
+    public static final ID<String, String> identity = ID.create("com.kalessil.phpStorm.yii2inspections.translation_keys");
+    private final KeyDescriptor<String> descriptor  = new EnumeratorStringDescriptor();
 
     @NotNull
     @Override
-    public ID<String, Void> getName() {
+    public ID<String, String> getName() {
         return identity;
     }
 
     @NotNull
     @Override
-    public DataIndexer<String, Void, FileContent> getIndexer() {
+    public DataIndexer<String, String, FileContent> getIndexer() {
         return fileContent -> {
-            final Map<String, Void> map = new THashMap<>();
-
-            /* ignore file if its' structure is not as expected */
+            final Map<String, String> map      = new THashMap<>();
             final PhpReturn returnExpression = PsiTreeUtil.findChildOfType(fileContent.getPsiFile(), PhpReturn.class);
-            final PsiElement argument        = returnExpression == null ? null : returnExpression.getArgument();
-            if (!(argument instanceof ArrayCreationExpression)) {
-                return map;
-            }
-
-            /* extract translations from the file */
-            for (final ArrayHashElement item : ((ArrayCreationExpression) argument).getHashElements()) {
-                final PhpPsiElement key = item.getKey();
-                if (key instanceof StringLiteralExpression) {
-                    final StringLiteralExpression literal = (StringLiteralExpression) key;
-                    final String message                  = literal.getContents();
-                    if (!message.isEmpty()) {
-                        map.putIfAbsent(PhpStringUtil.unescapeText(message, literal.isSingleQuote()), null);
+            if (returnExpression != null) {
+                final PsiElement argument = returnExpression.getArgument();
+                if (argument instanceof ArrayCreationExpression) {
+                    final String category = argument.getContainingFile().getName().replaceAll("\\.php$", "");
+                    for (final ArrayHashElement item : ((ArrayCreationExpression) argument).getHashElements()) {
+                        final PhpPsiElement key = item.getKey();
+                        if (key instanceof StringLiteralExpression) {
+                            final StringLiteralExpression literal = (StringLiteralExpression) key;
+                            final String message                  = literal.getContents();
+                            if (!message.isEmpty()) {
+                                map.putIfAbsent(PhpStringUtil.unescapeText(message, literal.isSingleQuote()), category);
+                            }
+                        }
                     }
                 }
             }
-
             return map;
         };
     }
@@ -70,15 +67,14 @@ final public class TranslationKeysIndexer extends FileBasedIndexExtension<String
 
     @NotNull
     @Override
-    public DataExternalizer<Void> getValueExternalizer() {
-        return ScalarIndexExtension.VOID_DATA_EXTERNALIZER;
+    public DataExternalizer<String> getValueExternalizer() {
+        return EnumeratorStringDescriptor.INSTANCE;
     }
 
     @NotNull
     @Override
     public FileBasedIndex.InputFilter getInputFilter() {
         return file -> {
-            //noinspection SimplifiableIfStatement - better readability
             if (PhpFileType.INSTANCE != file.getFileType() || file.getName().equals("config.php")) {
                 return false;
             }
@@ -94,6 +90,6 @@ final public class TranslationKeysIndexer extends FileBasedIndexExtension<String
 
     @Override
     public int getVersion() {
-        return 2;
+        return 4;
     }
 }
