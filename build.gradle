@@ -22,7 +22,7 @@ intellij {
     pluginName 'Yii2 Inspections'
     plugins = [
             "com.jetbrains.php:${phpPluginVersion}",
-            "com.jetbrains.twig",
+            "com.jetbrains.twig:${twigPluginVersion}",
             'CSS',
             'java-i18n',
             'properties',
