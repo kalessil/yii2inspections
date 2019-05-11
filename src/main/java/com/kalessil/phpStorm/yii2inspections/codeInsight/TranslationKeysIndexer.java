@@ -41,18 +41,18 @@ final public class TranslationKeysIndexer extends FileBasedIndexExtension<String
 
             /* ignore file if its' structure is not as expected */
             final PhpReturn returnExpression = PsiTreeUtil.findChildOfType(fileContent.getPsiFile(), PhpReturn.class);
-            final PsiElement argument        = null == returnExpression ? null : returnExpression.getArgument();
+            final PsiElement argument        = returnExpression == null ? null : returnExpression.getArgument();
             if (!(argument instanceof ArrayCreationExpression)) {
                 return map;
             }
 
             /* extract translations from the file */
-            for (ArrayHashElement item : ((ArrayCreationExpression) argument).getHashElements()) {
+            for (final ArrayHashElement item : ((ArrayCreationExpression) argument).getHashElements()) {
                 final PhpPsiElement key = item.getKey();
                 if (key instanceof StringLiteralExpression) {
                     final StringLiteralExpression literal = (StringLiteralExpression) key;
                     final String message                  = literal.getContents();
-                    if (message.length() > 0) {
+                    if (!message.isEmpty()) {
                         map.putIfAbsent(PhpStringUtil.unescapeText(message, literal.isSingleQuote()), null);
                     }
                 }
