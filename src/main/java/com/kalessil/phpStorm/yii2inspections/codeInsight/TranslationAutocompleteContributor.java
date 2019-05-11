@@ -69,9 +69,10 @@ public class TranslationAutocompleteContributor extends CompletionContributor {
                     final String category         = autocompleteMessage ? categoryLiteral.getContents() : "";
                     for (final String candidate : index.getAllKeys(TranslationKeysIndexer.identity, project)) {
                         if (autocompleteCategory) {
-                            suggestions.add(candidate);
+                            suggestions.addAll(index.getValues(TranslationKeysIndexer.identity, candidate, scope));
                         } else if (!category.isEmpty()) {
-                            if (index.getValues(TranslationKeysIndexer.identity, candidate, scope).contains(category)) {
+                            final List<String> categories = index.getValues(TranslationKeysIndexer.identity, candidate, scope);
+                            if (categories.contains(category)) {
                                 suggestions.add(candidate);
                             }
                         }
