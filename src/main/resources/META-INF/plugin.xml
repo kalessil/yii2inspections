@@ -12,8 +12,8 @@ Yii 2 and Craft CMS 3 Inspections for PhpStorm/IdeaUltimate
     <change-notes><![CDATA[
 11 May 2019: bug-fixes<br>
 <br>
-- Bug-fixed translations auto-completion (class casting exception);<br/>
-- Improved indexing (support spaces around pipe in twig-templates);<br/>
+- Re-worked translations auto-completion;<br/>
+- Reworked indexing (better spaces handling in twig-tags);<br/>
 <br/>
 <hr/>
     ]]>
