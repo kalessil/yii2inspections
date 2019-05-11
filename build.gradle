@@ -1,0 +1,55 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+
+buildscript {
+    repositories {
+        mavenCentral()
+
+        maven { url 'https://jetbrains.bintray.com/intellij-third-party-dependencies' }
+        maven { url 'https://jitpack.io' }
+        maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
+    }
+}
+
+plugins {
+    id "org.jetbrains.intellij"   version "0.3.7"
+    id 'com.palantir.git-version' version "0.11.0"
+}
+
+group 'com.kalessil.phpStorm.phpInspectionsUltimate'
+
+intellij {
+    version    ideaVersion
+    pluginName 'Yii2 Inspections'
+    plugins = [
+            "com.jetbrains.php:${phpPluginVersion}",
+            "com.jetbrains.twig",
+            'CSS',
+            'java-i18n',
+            'properties',
+            'yaml',
+            "PsiViewer:${psiViewerPluginVersion}",
+    ]
+}
+
+sourceSets {
+    test {
+        resources {
+            srcDir 'testData'
+        }
+    }
+}
+
+wrapper {
+    gradleVersion '4.8'
+}
+
+jar {
+    baseName = "Yii2Inspections"
+    /* I didn't manage to make id "com.github.johnrengelman.shadow" version "2.0.4" working, hence we are doing this */
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+test.testLogging.exceptionFormat = TestExceptionFormat.FULL
+compileJava.options.encoding     = 'UTF-8'
