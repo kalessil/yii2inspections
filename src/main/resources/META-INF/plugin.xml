@@ -2,7 +2,7 @@
     <!-- general information -->
     <id>com.kalessil.phpStorm.yii2inspections</id>
     <name>Yii2 Inspections</name>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
 
     <!-- description and change notes -->
@@ -10,17 +10,17 @@
 Yii 2 and Craft CMS 3 Inspections for PhpStorm/IdeaUltimate
     ]]></description>
     <change-notes><![CDATA[
-31 Mar 2018: bug-fixes<br>
+11 May 2019: bug-fixes<br>
 <br>
-- Missing @property annotations: resolved false-positives (setters with 2+ parameters);<br/>
-- Translation autocompletion: properly identify the context;<br/>
+- Bug-fixed translations auto-completion (class casting exception);<br/>
+- Improved indexing (support spaces around pipe in twig-templates);<br/>
 <br/>
 <hr/>
     ]]>
     </change-notes>
 
     <!-- platform dependencies declaration -->
-    <idea-version since-build="162.1889"/> <!-- PS 2016.2 and newer -->
+    <idea-version since-build="162.1889"/>
     <depends>com.jetbrains.php</depends>
     <depends>com.jetbrains.twig</depends>
     <depends>com.intellij.modules.platform</depends>

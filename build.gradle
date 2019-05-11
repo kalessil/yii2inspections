@@ -31,6 +31,11 @@ intellij {
     ]
 }
 
+patchPluginXml {
+    sinceBuild = "162.1889"
+    untilBuild = ""
+}
+
 sourceSets {
     test {
         resources {
@@ -44,7 +49,7 @@ wrapper {
 }
 
 jar {
-    baseName = "Yii2Inspections"
+    baseName = "yii2inspections"
     /* I didn't manage to make id "com.github.johnrengelman.shadow" version "2.0.4" working, hence we are doing this */
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
