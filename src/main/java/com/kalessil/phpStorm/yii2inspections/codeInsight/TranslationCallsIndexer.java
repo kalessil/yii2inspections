@@ -40,7 +40,7 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
     final static private Pattern regexTwigRegisterTranslationsMessage;
     static {
         regexTwigTranslateFilter                    // <- groups 1,6 are needed
-            = Pattern.compile("\\W((\\'[^\\']+\\')|(\\\"[^\\\"]+\\\"))\\|(t|translate)(\\(((\\'[^\\']+\\')|(\\\"[^\\\"]+\\\")))?\\W");
+            = Pattern.compile("\\W((\\'[^\\']+\\')|(\\\"[^\\\"]+\\\"))\\s*\\|\\s*(t|translate)(\\(((\\'[^\\']+\\')|(\\\"[^\\\"]+\\\")))?\\W");
         regexTwigRegisterTranslationsMessagesArray // <- group 2 is needed
             = Pattern.compile("(?:\\{\\%\\s+do\\s+view\\.registerTranslations\\s*\\(\\s*)(\\'[^\\']*\\'|\\\"[^\\\"]*\\\")(?:\\s*\\,\\s*)(\\[\\s*(?:(?:\\'[^\\']*\\'|\\\"[^\\\"]*\\\")(?:\\s*\\,\\s*)?)+\\s*\\])(?:\\s*\\)\\s+\\%\\})", Pattern.MULTILINE);
         regexTwigRegisterTranslationsMessage       // <- group 1 is needed
@@ -152,6 +152,6 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
 
     @Override
     public int getVersion() {
-        return 1;
+        return 2;
     }
 }
