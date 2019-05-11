@@ -34,27 +34,26 @@ public class TranslationAutocompleteContributor extends CompletionContributor {
 
                 /* suggest only to target code structure */
                 final StringLiteralExpression parameter = (StringLiteralExpression) target.getParent();
-                PsiElement context                      = parameter.getParent().getParent();
-                context                                 = context instanceof ParameterList ? context.getParent() : context;
+                final PsiElement context                = parameter.getParent().getParent();
                 if (!(context instanceof MethodReference)) {
                     return;
                 }
 
                 final MethodReference reference         = (MethodReference) context;
                 final String name                       = reference.getName();
-                final PsiElement[] params               = reference.getParameters();
-                if (name == null || params.length == 0 || (!name.equals("t") && !(name.equals("registerTranslations")))) {
+                final PsiElement[] arguments            = reference.getParameters();
+                if (name == null || arguments.length == 0 || (!name.equals("t") && !name.equals("registerTranslations"))) {
                     return;
                 }
 
                 /* generate proposals */
-                final boolean autocompleteCategory = params[0] == parameter;
-                final boolean autocompleteMessage  = params.length > 1 && params[1] == parameter;
+                final boolean autocompleteCategory = arguments[0] == parameter;
+                final boolean autocompleteMessage  = arguments.length > 1 && arguments[1] == parameter;
                 if (autocompleteCategory || autocompleteMessage) {
                     StringLiteralExpression category = null;
                     if (autocompleteMessage) {
-                        category = StringLiteralExtractUtil.resolveAsStringLiteral(params[0], true);
-                        if (null == category) {
+                        category = StringLiteralExtractUtil.resolveAsStringLiteral(arguments[0], true);
+                        if (category == null) {
                             return;
                         }
                     }
@@ -65,22 +64,19 @@ public class TranslationAutocompleteContributor extends CompletionContributor {
                         = new HashSet<>(FileBasedIndex.getInstance().getAllKeys(TranslationCallsIndexer.identity, target.getProject()));
 
                     final String prefix = autocompleteMessage ? category.getContents() + "|" : null;
-                    for (String prefixedMessage : messages) {
+                    for (final String prefixedMessage : messages) {
                         if (autocompleteCategory) {
                             suggestions.add(prefixedMessage.substring(0, prefixedMessage.indexOf('|')));
-                            continue;
-                        }
-
-                        if (prefixedMessage.startsWith(prefix)) {
-                            suggestions.add(prefixedMessage.substring(1 + prefixedMessage.indexOf('|')));
+                        } else if (prefixedMessage.startsWith(prefix)) {
+                            suggestions.add(prefixedMessage.substring(prefixedMessage.indexOf('|') + 1));
                         }
                     }
                     messages.clear();
 
-                    if (suggestions.size() > 0){
+                    if (!suggestions.isEmpty()){
                         final List<String> sortedSuggestions = new ArrayList<>(suggestions);
                         Collections.sort(sortedSuggestions);
-                        for (String suggestion : sortedSuggestions) {
+                        for (final String suggestion : sortedSuggestions) {
                             completionResultSet.addElement(LookupElementBuilder.create(suggestion));
                         }
 
