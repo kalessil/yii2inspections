@@ -2,9 +2,11 @@ package com.kalessil.phpStorm.yii2inspections.codeInsight;
 
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.openapi.project.Project;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.php.lang.PhpLanguage;
@@ -50,28 +52,30 @@ public class TranslationAutocompleteContributor extends CompletionContributor {
                 final boolean autocompleteCategory = arguments[0] == parameter;
                 final boolean autocompleteMessage  = arguments.length > 1 && arguments[1] == parameter;
                 if (autocompleteCategory || autocompleteMessage) {
-                    StringLiteralExpression category = null;
+                    StringLiteralExpression categoryLiteral = null;
                     if (autocompleteMessage) {
-                        category = StringLiteralExtractUtil.resolveAsStringLiteral(arguments[0], true);
-                        if (category == null) {
+                        categoryLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(arguments[0], true);
+                        if (categoryLiteral == null) {
                             return;
                         }
                     }
 
                     /* extract uniques messages for faster processing */
-                    final Set<String> suggestions = new HashSet<>();
-                    final Set<String> messages
-                        = new HashSet<>(FileBasedIndex.getInstance().getAllKeys(TranslationCallsIndexer.identity, target.getProject()));
+                    final FileBasedIndex index    = FileBasedIndex.getInstance();
+                    final Project project         = target.getProject();
+                    final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
 
-                    final String prefix = autocompleteMessage ? category.getContents() + "|" : null;
-                    for (final String prefixedMessage : messages) {
+                    final Set<String> suggestions = new HashSet<>();
+                    final String category         = autocompleteMessage ? categoryLiteral.getContents() : "";
+                    for (final String candidate : index.getAllKeys(TranslationKeysIndexer.identity, project)) {
                         if (autocompleteCategory) {
-                            suggestions.add(prefixedMessage.substring(0, prefixedMessage.indexOf('|')));
-                        } else if (prefixedMessage.startsWith(prefix)) {
-                            suggestions.add(prefixedMessage.substring(prefixedMessage.indexOf('|') + 1));
+                            suggestions.add(candidate);
+                        } else if (!category.isEmpty()) {
+                            if (index.getValues(TranslationKeysIndexer.identity, candidate, scope).contains(category)) {
+                                suggestions.add(candidate);
+                            }
                         }
                     }
-                    messages.clear();
 
                     if (!suggestions.isEmpty()){
                         final List<String> sortedSuggestions = new ArrayList<>(suggestions);
