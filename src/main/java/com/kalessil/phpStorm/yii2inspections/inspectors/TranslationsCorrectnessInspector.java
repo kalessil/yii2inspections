@@ -72,8 +72,7 @@ final public class TranslationsCorrectnessInspector extends PhpInspection {
                 /* handle `category` and `category/subcategory` cases */
                 String categoryForFileName = extracted.getCategory().getContents();
                 if (-1 != categoryForFileName.indexOf('/')) {
-                    categoryForFileName
-                        = categoryForFileName.substring(1 + categoryForFileName.lastIndexOf('/'), categoryForFileName.length());
+                    categoryForFileName = categoryForFileName.substring(1 + categoryForFileName.lastIndexOf('/'));
                 }
                 final String expectedFileName = categoryForFileName + ".php";
 

@@ -4,15 +4,12 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.FileBasedIndex;
-import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.inspections.PhpInspection;
 import com.jetbrains.php.lang.lexer.PhpTokenTypes;
 import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
@@ -21,7 +18,6 @@ import com.jetbrains.php.lang.psi.elements.PhpPsiElement;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.jetbrains.php.util.PhpStringUtil;
-import com.jetbrains.twig.TwigFileType;
 import com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationCallsIndexer;
 import com.kalessil.phpStorm.yii2inspections.inspectors.utils.TranslationProviderUtil;
 import org.jetbrains.annotations.NotNull;
@@ -56,10 +52,6 @@ final public class UnusedTranslationsInspector extends PhpInspection {
                 if (!TranslationProviderUtil.isProvider(file)) {
                     return;
                 }
-
-                /* prepare scope of index search */
-                GlobalSearchScope theScope = GlobalSearchScope.allScope(expression.getProject());
-                theScope = GlobalSearchScope.getScopeRestrictedByFileTypes(theScope, PhpFileType.INSTANCE, HtmlFileType.INSTANCE, TwigFileType.INSTANCE);
 
                 /* iterate defined translations and report unused */
                 final String searchPrefix = file.getName().replaceAll("\\.php$", "|");
