@@ -28,16 +28,22 @@ public class TranslationAutocompleteContributor extends CompletionContributor {
             ) {
                 /* validate the autocompletion target */
                 final PsiElement target = completionParameters.getOriginalPosition();
-                if (null == target || !(target.getParent() instanceof StringLiteralExpression)) {
+                if (target == null || !(target.getParent() instanceof StringLiteralExpression)) {
                     return;
                 }
 
                 /* suggest only to target code structure */
                 final StringLiteralExpression parameter = (StringLiteralExpression) target.getParent();
-                final MethodReference reference         = (MethodReference) parameter.getParent().getParent();
+                PsiElement context                      = parameter.getParent().getParent();
+                context                                 = context instanceof ParameterList ? context.getParent() : context;
+                if (!(context instanceof MethodReference)) {
+                    return;
+                }
+
+                final MethodReference reference         = (MethodReference) context;
                 final String name                       = reference.getName();
                 final PsiElement[] params               = reference.getParameters();
-                if (null == name || 0 == params.length || (!name.equals("t") && !(name.equals("registerTranslations")))) {
+                if (name == null || params.length == 0 || (!name.equals("t") && !(name.equals("registerTranslations")))) {
                     return;
                 }
 
