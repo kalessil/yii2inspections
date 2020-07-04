@@ -122,14 +122,17 @@ final public class MissingPropertyAnnotationsInspector extends PhpInspection {
 
                 /* process extracted methods*/
                 for (String candidate : mappedMethods.keySet()) {
-                    Method getterMethod = null;
-                    Method setterMethod = null;
+                    final String propertyName = StringUtils.uncapitalize(candidate.replaceAll("^(get|set)", ""));
+                    Method getterMethod       = null;
+                    Method setterMethod       = null;
 
                     /* extract methods: get (looks up and extracts set), set (looks up get and skipped if found) */
                     if (candidate.startsWith("get")) {
                         getterMethod = mappedMethods.get(candidate);
                         if (getterMethod.isStatic() || 0 != getterMethod.getParameters().length) {
                             getterMethod = null;
+                        } else {
+                            intentions.put(propertyName, intentions.computeIfAbsent(propertyName, n -> 0) + TYPE_READ);
                         }
 
                         final String complimentarySetter = candidate.replaceAll("^get", "set");
@@ -138,13 +141,14 @@ final public class MissingPropertyAnnotationsInspector extends PhpInspection {
                             if (setterMethod.isStatic() || 0 == setterMethod.getParameters().length) {
                                 setterMethod = null;
                             }
-
                         }
                     }
                     if (candidate.startsWith("set")) {
                         setterMethod = mappedMethods.get(candidate);
                         if (setterMethod.isStatic() || setterMethod.getParameters().length != 1) {
                             setterMethod = null;
+                        } else {
+                            intentions.put(propertyName, intentions.computeIfAbsent(propertyName, n -> 0) + TYPE_WRITE);
                         }
 
                         final String complimentaryGetter = candidate.replaceAll("^set", "get");
@@ -188,9 +192,7 @@ final public class MissingPropertyAnnotationsInspector extends PhpInspection {
                     propertyTypesFqns.clear();
 
                     final String typesAsString = propertyTypes.isEmpty() ? "mixed" : String.join("|", propertyTypes);
-                    final String propertyName  = StringUtils.uncapitalize(candidate.replaceAll("^(get|set)", ""));
                     properties.put(propertyName, typesAsString);
-                    intentions.put(propertyName, intentions.computeIfAbsent(propertyName, n -> 0) + (setterMethod != null ? TYPE_WRITE : TYPE_READ));
                 }
 
                 /* exclude annotated properties: lazy bulk operation */
