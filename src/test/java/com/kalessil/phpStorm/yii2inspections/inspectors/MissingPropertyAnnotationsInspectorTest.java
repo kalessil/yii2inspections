@@ -1,8 +1,6 @@
 package com.kalessil.phpStorm.yii2inspections.inspectors;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-
-final public class MissingPropertyAnnotationsInspectorTest extends CodeInsightFixtureTestCase {
+final public class MissingPropertyAnnotationsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatternsComplimentaryApproach() {
         MissingPropertyAnnotationsInspector inspector = new MissingPropertyAnnotationsInspector();
         inspector.REQUIRE_BOTH_GETTER_SETTER          = true;

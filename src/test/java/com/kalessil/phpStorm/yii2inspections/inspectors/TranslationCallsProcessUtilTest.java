@@ -1,7 +1,6 @@
 package com.kalessil.phpStorm.yii2inspections.inspectors;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.kalessil.phpStorm.yii2inspections.utils.TranslationCallsProcessUtil;
@@ -9,7 +8,7 @@ import com.kalessil.phpStorm.yii2inspections.utils.TranslationCallsProcessUtil;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TranslationCallsProcessUtilTest extends CodeInsightFixtureTestCase {
+public class TranslationCallsProcessUtilTest extends PhpCodeInsightFixtureTestCase {
     public void testSingleMessageExtraction() {
         Project project = myFixture.getProject();
 

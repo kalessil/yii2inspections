@@ -1,8 +1,6 @@
 package com.kalessil.phpStorm.yii2inspections.inspectors;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-
-final public class UnusedTranslationsInspectorTest extends CodeInsightFixtureTestCase {
+final public class UnusedTranslationsInspectorTest extends PhpCodeInsightFixtureTestCase {
     public void testIfFindsAllPatterns() {
         myFixture.allowTreeAccessForAllFiles();
         myFixture.configureByFile("testData/fixtures/unused-translations.php");
