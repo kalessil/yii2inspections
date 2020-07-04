@@ -13,8 +13,8 @@ class ClassNeedsNoProperties extends Object { // <-- all false-positives
 
 /**
  *
- * @property mixed $author
- * @property void $book
+ * @property-write mixed $author
+ * @property-read void $book
  */
 class ClassNeedsProperties1
     extends Object
@@ -25,8 +25,8 @@ class ClassNeedsProperties1
 
 /**
  *
- * @property mixed $author2
- * @property mixed $author1
+ * @property-write mixed $author2
+ * @property-write mixed $author1
  */
 class ClassNeedsProperties2
     extends Object
@@ -40,8 +40,8 @@ class ClassNeedsProperties2
 
 /**
  *
- * @property void $author2
- * @property void $author1
+ * @property-read void $author2
+ * @property-read void $author1
  */
 class ClassNeedsProperties3
     extends Object
