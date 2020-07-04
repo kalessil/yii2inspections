@@ -9,7 +9,15 @@ final public class UnusedTranslationsInspectorTest extends CodeInsightFixtureTes
         myFixture.configureByFile("testData/fixtures/unused-translations.html");
         myFixture.configureByFile("testData/fixtures/unused-translations.html.twig");
         myFixture.configureByFile("testData/fixtures/translations/en-US/unused.php");
-        myFixture.enableInspections(UnusedTranslationsInspector.class);
+        myFixture.enableInspections(new UnusedTranslationsInspector());
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile(
+                "testData/fixtures/translations/en-US/unused.php",
+                "testData/fixtures/translations/en-US/unused.fixed.php",
+                false
+        );
     }
 }
