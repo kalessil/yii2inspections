@@ -2,6 +2,10 @@ dist:     trusty
 language: java
 jdk:      oraclejdk8
 
+addons:
+  apt_packages:
+    - php5-cli
+
 notifications:
   email:  false
 
@@ -32,11 +36,11 @@ cache:
   - $HOME/.gradle/wrapper/
 
 before_install:
+  - java -version && php -v
+  - chmod +x gradlew
   - "export ORG_GRADLE_PROJECT_ideaVersion=${IDEA_VERSION}"
   - "export ORG_GRADLE_PROJECT_phpPluginVersion=${PHP_PLUGIN_VERSION}"
   - "export ORG_GRADLE_PROJECT_twigPluginVersion=${TWIG_PLUGIN_VERSION}"
-  - java -version
-  - chmod +x gradlew
 
 script:
   - ./gradlew check buildPlugin
