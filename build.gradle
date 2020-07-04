@@ -27,7 +27,6 @@ intellij {
             'java-i18n',
             'properties',
             'yaml',
-            "PsiViewer:${psiViewerPluginVersion}",
     ]
 }
 
