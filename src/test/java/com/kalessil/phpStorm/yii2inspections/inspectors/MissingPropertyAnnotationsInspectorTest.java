@@ -13,8 +13,10 @@ final public class MissingPropertyAnnotationsInspectorTest extends PhpCodeInsigh
         myFixture.checkResultByFile("testData/fixtures/property-tags-complimentary.fixed.php");
     }
     public void testIfFindsAllPatternsPartialApproach() {
+        MissingPropertyAnnotationsInspector inspector = new MissingPropertyAnnotationsInspector();
+        inspector.REQUIRE_BOTH_GETTER_SETTER          = false;
         myFixture.configureByFile("testData/fixtures/property-tags-partial.php");
-        myFixture.enableInspections(new MissingPropertyAnnotationsInspector());
+        myFixture.enableInspections(inspector);
         myFixture.testHighlighting(true, false, true);
 
         myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));

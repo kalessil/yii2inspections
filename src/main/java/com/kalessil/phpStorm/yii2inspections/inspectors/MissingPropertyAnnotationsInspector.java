@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment;
@@ -32,11 +33,15 @@ import java.util.*;
  */
 
 final public class MissingPropertyAnnotationsInspector extends PhpInspection {
+    private static final int TYPE_READ       = 1;
+    private static final int TYPE_WRITE      = 2;
+    private static final int TYPE_READ_WRITE = TYPE_READ + TYPE_WRITE;
+
     // configuration flags automatically saved by IDE
     @SuppressWarnings("WeakerAccess")
     public boolean REQUIRE_BOTH_GETTER_SETTER = false;
 
-    private static final String messagePattern = "'%p%': properties needs to be annotated";
+    private static final String messagePattern = "'%s': properties needs to be annotated";
 
     private static final Set<String> baseObjectClasses = new HashSet<>();
     static {
@@ -87,27 +92,28 @@ final public class MissingPropertyAnnotationsInspector extends PhpInspection {
                 }
 
                 /* iterate get methods, find matching set methods */
-                final Map<String, String> props = this.findPropertyCandidates(clazz);
-                if (props.size() > 0) {
-                    List<String> names   = new ArrayList<>(props.keySet()); Collections.sort(names);
-                    final String message = messagePattern.replace("%p%", String.join("', '", names));
+                final Pair<Map<String, String>, Map<String, Integer>> pair = this.findPropertyCandidates(clazz);
+                final Map<String, String> properties                       = pair.getFirst();
+                if (properties.size() > 0) {
+                    final List<String> names = new ArrayList<>(properties.keySet()); Collections.sort(names);
                     holder.registerProblem(
                             nameNode,
-                            MessagesPresentationUtil.prefixWithYii(message),
+                            MessagesPresentationUtil.prefixWithYii(String.format(messagePattern, String.join("', '", names))),
                             ProblemHighlightType.WEAK_WARNING,
-                            new TheLocalFix(props)
+                            new TheLocalFix(properties, pair.getSecond())
                     );
                 }
             }
 
             @NotNull
-            private Map<String, String> findPropertyCandidates(@NotNull PhpClass clazz) {
-                final Map<String, String> properties = new HashMap<>();
+            private Pair<Map<String, String>, Map<String, Integer>> findPropertyCandidates(@NotNull PhpClass clazz) {
+                final Map<String, String> properties  = new HashMap<>();
+                final Map<String, Integer> intentions = new HashMap<>();
 
                 /* extract methods and operate on name-methods relations */
                 final Method[] methods = clazz.getOwnMethods();
                 if (null == methods || 0 == methods.length) {
-                    return properties;
+                    return new Pair<>(properties, intentions);
                 }
                 final Map<String, Method> mappedMethods = new HashMap<>();
                 for (Method method : methods) {
@@ -182,7 +188,9 @@ final public class MissingPropertyAnnotationsInspector extends PhpInspection {
                     propertyTypesFqns.clear();
 
                     final String typesAsString = propertyTypes.isEmpty() ? "mixed" : String.join("|", propertyTypes);
-                    properties.put(StringUtils.uncapitalize(candidate.replaceAll("^(get|set)", "")), typesAsString);
+                    final String propertyName  = StringUtils.uncapitalize(candidate.replaceAll("^(get|set)", ""));
+                    properties.put(propertyName, typesAsString);
+                    intentions.put(propertyName, intentions.computeIfAbsent(propertyName, n -> 0) + (setterMethod != null ? TYPE_WRITE : TYPE_READ));
                 }
 
                 /* exclude annotated properties: lazy bulk operation */
@@ -195,21 +203,24 @@ final public class MissingPropertyAnnotationsInspector extends PhpInspection {
                         }
 
                         properties.remove(candidate.getName());
+                        intentions.remove(candidate.getName());
                     }
                     fields.clear();
                 }
 
-                return properties;
+                return new Pair<>(properties, intentions);
             }
         };
     }
 
     private static class TheLocalFix implements LocalQuickFix {
         final private Map<String, String> properties;
+        final private Map<String, Integer> intentions;
 
-        TheLocalFix(@NotNull Map<String, String> properties) {
+        TheLocalFix(@NotNull Map<String, String> properties, @NotNull Map<String, Integer> intentions) {
             super();
             this.properties = properties;
+            this.intentions = intentions;
         }
 
         @NotNull
@@ -270,8 +281,14 @@ final public class MissingPropertyAnnotationsInspector extends PhpInspection {
                         lines.add(lines.size() - 1, pattern);
                     }
                     for (String propertyName : this.properties.keySet()) {
+                        final String annotation; //
+                        switch (this.intentions.get(propertyName)) {
+                            case 1:   annotation = "@property-read"; break;
+                            case 2:   annotation = "@property-write"; break;
+                            default:  annotation = "@property";
+                        }
                         final String types   = this.properties.get(propertyName);
-                        final String newLine = pattern + "@property " + types + " $" + propertyName;
+                        final String newLine = String.format("%s%s %s $%s", pattern, annotation, types, propertyName);
 
                         lines.add((injectionIndex > 0 ? injectionIndex : lines.size() - 1), newLine);
                     }
