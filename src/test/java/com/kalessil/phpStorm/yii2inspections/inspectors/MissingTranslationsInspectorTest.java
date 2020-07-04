@@ -9,7 +9,15 @@ final public class MissingTranslationsInspectorTest extends CodeInsightFixtureTe
         myFixture.configureByFile("testData/fixtures/missing-translations.html");
         myFixture.configureByFile("testData/fixtures/missing-translations.html.twig");
         myFixture.configureByFile("testData/fixtures/translations/en-US/missing.php");
-        myFixture.enableInspections(MissingTranslationsInspector.class);
+        myFixture.enableInspections(new MissingTranslationsInspector());
         myFixture.testHighlighting(true, false, true);
+
+        myFixture.getAllQuickFixes().forEach(fix -> myFixture.launchAction(fix));
+        myFixture.setTestDataPath(".");
+        myFixture.checkResultByFile(
+                "testData/fixtures/translations/en-US/missing.php",
+                "testData/fixtures/translations/en-US/missing.fixed.php",
+                false
+        );
     }
 }
