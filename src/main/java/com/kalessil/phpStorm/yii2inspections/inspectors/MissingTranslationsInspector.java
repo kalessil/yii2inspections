@@ -40,8 +40,15 @@ final public class MissingTranslationsInspector extends PhpInspection {
     private static final String messagePattern = "Some message are missing: %c% in total";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "MissingTranslationsInspection";
+    }
+
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "Missing translations";
     }
 
     @Override

@@ -44,9 +44,17 @@ final public class MissingPropertyAnnotationsInspector extends PhpInspection {
         baseObjectClasses.add("\\yii\\base\\BaseObject");
     }
 
+
     @NotNull
+    @Override
     public String getShortName() {
         return "MissingPropertyAnnotationsInspection";
+    }
+
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "Missing @property annotations";
     }
 
     @Override

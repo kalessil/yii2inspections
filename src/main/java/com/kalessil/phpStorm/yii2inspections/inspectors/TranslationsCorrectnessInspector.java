@@ -54,8 +54,15 @@ final public class TranslationsCorrectnessInspector extends PhpInspection {
     }
 
     @NotNull
+    @Override
     public String getShortName() {
         return "TranslationsCorrectnessInspection";
+    }
+
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "Translation message correctness";
     }
 
     @Override

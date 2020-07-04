@@ -39,8 +39,15 @@ final public class UnusedTranslationsInspector extends PhpInspection {
     private static final String messagePattern = "This translation seems to be not used";
 
     @NotNull
+    @Override
     public String getShortName() {
         return "UnusedTranslationsInspection";
+    }
+
+    @NotNull
+    @Override
+    public String getDisplayName() {
+        return "Unused translations";
     }
 
     @Override
