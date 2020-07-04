@@ -20,6 +20,7 @@ import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.jetbrains.php.util.PhpStringUtil;
 import com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationCallsIndexer;
 import com.kalessil.phpStorm.yii2inspections.inspectors.utils.TranslationProviderUtil;
+import com.kalessil.phpStorm.yii2inspections.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -81,7 +82,12 @@ final public class UnusedTranslationsInspector extends PhpInspection {
                     usages.clear();
 
                     if (!found) {
-                        holder.registerProblem(pair, messagePattern, ProblemHighlightType.LIKE_UNUSED_SYMBOL, new TheLocalFix());
+                        holder.registerProblem(
+                                pair,
+                                MessagesPresentationUtil.prefixWithYii(messagePattern),
+                                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                                new TheLocalFix()
+                        );
                     }
                 }
             }

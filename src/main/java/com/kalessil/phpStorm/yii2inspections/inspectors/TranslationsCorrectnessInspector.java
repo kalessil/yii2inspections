@@ -14,6 +14,7 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.jetbrains.php.util.PhpStringUtil;
 import com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationKeysIndexer;
+import com.kalessil.phpStorm.yii2inspections.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.yii2inspections.utils.TranslationCallsProcessUtil;
 import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
@@ -89,12 +90,20 @@ final public class TranslationsCorrectnessInspector extends PhpInspection {
 
                     /* warn injections are presented and skip further processing */
                     if (REPORT_INJECTIONS && null != literal.getFirstPsiChild()) {
-                        holder.registerProblem(reportingTarget, messageInjection, ProblemHighlightType.WEAK_WARNING);
+                        holder.registerProblem(
+                                reportingTarget,
+                                MessagesPresentationUtil.prefixWithYii(messageInjection),
+                                ProblemHighlightType.WEAK_WARNING
+                        );
                         continue;
                     }
                     /* warn if non-ascii characters has been used */
                     if (REPORT_NONASCII_CHARACTERS && nonAsciiCharsRegex.matcher(message).matches()) {
-                        holder.registerProblem(reportingTarget, messageNonAscii, ProblemHighlightType.WEAK_WARNING);
+                        holder.registerProblem(
+                                reportingTarget,
+                                MessagesPresentationUtil.prefixWithYii(messageNonAscii),
+                                ProblemHighlightType.WEAK_WARNING
+                        );
                     }
 
                     /* warn if the message is have no translations in the group */
@@ -114,7 +123,11 @@ final public class TranslationsCorrectnessInspector extends PhpInspection {
 
                     /* report found cases */
                     if (REPORT_UNKNOWN_TRANSLATIONS && 0 == providers.size()) {
-                        holder.registerProblem(reportingTarget, messageNoTranslations, ProblemHighlightType.WEAK_WARNING);
+                        holder.registerProblem(
+                                reportingTarget,
+                                MessagesPresentationUtil.prefixWithYii(messageNoTranslations),
+                                ProblemHighlightType.WEAK_WARNING
+                        );
                     }
                     providers.clear();
                 }

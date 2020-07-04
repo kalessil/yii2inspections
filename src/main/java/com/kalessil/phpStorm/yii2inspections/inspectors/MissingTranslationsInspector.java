@@ -21,6 +21,7 @@ import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.jetbrains.php.util.PhpStringUtil;
 import com.kalessil.phpStorm.yii2inspections.codeInsight.TranslationCallsIndexer;
 import com.kalessil.phpStorm.yii2inspections.inspectors.utils.TranslationProviderUtil;
+import com.kalessil.phpStorm.yii2inspections.utils.MessagesPresentationUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -90,7 +91,12 @@ final public class MissingTranslationsInspector extends PhpInspection {
 
                     if (missing.size() > 0) {
                         final String message = messagePattern.replace("%c%", String.valueOf(missing.size()));
-                        holder.registerProblem(expression.getFirstChild(), message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(missing));
+                        holder.registerProblem(
+                                expression.getFirstChild(),
+                                MessagesPresentationUtil.prefixWithYii(message),
+                                ProblemHighlightType.WEAK_WARNING,
+                                new TheLocalFix(missing)
+                        );
                     }
                 }
 

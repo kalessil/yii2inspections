@@ -14,6 +14,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.yii2inspections.inspectors.utils.InheritanceChainExtractUtil;
 import com.kalessil.phpStorm.yii2inspections.inspectors.utils.NamedElementUtil;
+import com.kalessil.phpStorm.yii2inspections.utils.MessagesPresentationUtil;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -80,9 +81,14 @@ final public class MissingPropertyAnnotationsInspector extends PhpInspection {
                 /* iterate get methods, find matching set methods */
                 final Map<String, String> props = this.findPropertyCandidates(clazz);
                 if (props.size() > 0) {
-                    List<String> names = new ArrayList<>(props.keySet()); Collections.sort(names);
+                    List<String> names   = new ArrayList<>(props.keySet()); Collections.sort(names);
                     final String message = messagePattern.replace("%p%", String.join("', '", names));
-                    holder.registerProblem(nameNode, message, ProblemHighlightType.WEAK_WARNING, new TheLocalFix(props));
+                    holder.registerProblem(
+                            nameNode,
+                            MessagesPresentationUtil.prefixWithYii(message),
+                            ProblemHighlightType.WEAK_WARNING,
+                            new TheLocalFix(props)
+                    );
                 }
             }
 

@@ -7,7 +7,7 @@ class Object {}
 /**
  * @property $book
  */
-class <weak_warning descr="'author': properties needs to be annotated">ClassNeedsProperties</weak_warning> extends Object {
+class <weak_warning descr="[Yii2] 'author': properties needs to be annotated">ClassNeedsProperties</weak_warning> extends Object {
     private $_author;
     private $_book;
 

@@ -11,13 +11,13 @@ class ClassNeedsNoProperties extends Object { // <-- all false-positives
     static public function getQuantity()      {} // <- static
 }
 
-class <weak_warning descr="'author', 'book': properties needs to be annotated">ClassNeedsProperties1</weak_warning>
+class <weak_warning descr="[Yii2] 'author', 'book': properties needs to be annotated">ClassNeedsProperties1</weak_warning>
     extends Object
 {
     public function setAuthor($author)        {}
     public function getBook()                 {}
 }
-class <weak_warning descr="'author1', 'author2': properties needs to be annotated">ClassNeedsProperties2</weak_warning>
+class <weak_warning descr="[Yii2] 'author1', 'author2': properties needs to be annotated">ClassNeedsProperties2</weak_warning>
     extends Object
 {
     public function setAuthor1($author)        {}
@@ -26,7 +26,7 @@ class <weak_warning descr="'author1', 'author2': properties needs to be annotate
     public function setAuthor2($author)        {}
     public function getAuthor2($default)       {} // <- extra arguments
 }
-class <weak_warning descr="'author1', 'author2': properties needs to be annotated">ClassNeedsProperties3</weak_warning>
+class <weak_warning descr="[Yii2] 'author1', 'author2': properties needs to be annotated">ClassNeedsProperties3</weak_warning>
     extends Object
 {
     public function getAuthor1()               {}

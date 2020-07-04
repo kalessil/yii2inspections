@@ -8,5 +8,5 @@ return array(
     'Used message from TWIG (t)'                    => 'Used message from TWIG (t)',
     'Used message from TWIG (registerTranslations)' => 'Used message from TWIG (registerTranslations)',
 
-    <weak_warning descr="This translation seems to be not used">'Unused message' => 'Unused message'</weak_warning>,
+    <weak_warning descr="[Yii2] This translation seems to be not used">'Unused message' => 'Unused message'</weak_warning>,
 );
