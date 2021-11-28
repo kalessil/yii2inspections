@@ -44,7 +44,7 @@ public class TranslationAutocompleteContributor extends CompletionContributor {
                 final MethodReference reference         = (MethodReference) context;
                 final String name                       = reference.getName();
                 final PsiElement[] arguments            = reference.getParameters();
-                if (name == null || arguments.length == 0 || (!name.equals("t") && !name.equals("registerTranslations"))) {
+                if (name == null || arguments.length == 0 || (!name.equals("t") && !name.equals("registerTranslations") && !name.equals("prep"))) {
                     return;
                 }
 

@@ -27,7 +27,7 @@ final public class TranslationCallsProcessUtil {
     static public ProcessingResult process(@NotNull MethodReference reference, boolean resolve) {
         final String name         = reference.getName();
         final PsiElement[] params = reference.getParameters();
-        if (null == name || params.length < 2 || (!name.equals("t") && !(name.equals("registerTranslations")))) {
+        if (null == name || params.length < 2 || (!name.equals("t") && !name.equals("registerTranslations") && !name.equals("prep"))) {
             return null;
         }
 
@@ -38,7 +38,7 @@ final public class TranslationCallsProcessUtil {
         }
 
         final Map<StringLiteralExpression, PsiElement> messages = new HashMap<>();
-        if (name.equals("t")) {
+        if (name.equals("t") || name.equals("prep")) {
             /* 2nd argument expected to be a string literal (possible with injections) */
             final StringLiteralExpression messageLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(params[1], resolve);
             if (null != messageLiteral && messageLiteral.getTextLength() > 2) {
