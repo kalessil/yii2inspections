@@ -2,19 +2,17 @@
     <!-- general information -->
     <id>com.kalessil.phpStorm.yii2inspections</id>
     <name>Yii2 Inspections</name>
-    <version>1.0.5</version>
-    <vendor email="kalessil@gmail.com">Vladimir Reznichenko</vendor>
+    <version>1.0.6</version>
+    <vendor email="ea.inspections.team@gmail.com">EA Inspections Team</vendor>
 
     <!-- description and change notes -->
     <description><![CDATA[
 Yii 2 and Craft CMS 3 Inspections for PhpStorm/IdeaUltimate
     ]]></description>
     <change-notes><![CDATA[
-4 July 2020: improvements<br>
+28 November 2021: improvements<br>
 <br>
-- PhpStorm compatibility fixes;<br/>
-- Prefix messages with '[Yii2] ';<br/>
-- Missing @property annotations: use @property-read, @property-write where applicable;<br/>
+- Added craft\i18n\Translation::prep() support;<br/>
 <br/>
 <hr/>
     ]]>
