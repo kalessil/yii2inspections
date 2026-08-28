@@ -16,8 +16,8 @@ import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
 import com.kalessil.phpStorm.yii2inspections.inspectors.utils.InheritanceChainExtractUtil;
 import com.kalessil.phpStorm.yii2inspections.inspectors.utils.NamedElementUtil;
 import com.kalessil.phpStorm.yii2inspections.utils.MessagesPresentationUtil;
+import com.kalessil.phpStorm.yii2inspections.utils.StringUtils;
 import net.miginfocom.swing.MigLayout;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
