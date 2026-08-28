@@ -27,21 +27,18 @@ final public class TranslationCallsProcessUtil {
     static public ProcessingResult process(@NotNull MethodReference reference, boolean resolve) {
         final String name         = reference.getName();
         final PsiElement[] params = reference.getParameters();
-        if (null == name || params.length < 2 || (!name.equals("t") && !name.equals("registerTranslations") && !name.equals("prep"))) {
+        if (null == name || params.length < 2 || (! name.equals("t") && ! name.equals("registerTranslations") && ! name.equals("prep") && ! name.equals("translate"))) {
             return null;
         }
 
-        /* category needs to be resolved and without any injections */
-        final StringLiteralExpression categoryLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(params[0], resolve);
-        if (null == categoryLiteral || null != categoryLiteral.getFirstPsiChild() || categoryLiteral.getTextLength() <= 2) {
-            return null;
-        }
-
+        StringLiteralExpression categoryLiteral = null;
         final Map<StringLiteralExpression, PsiElement> messages = new HashMap<>();
+
         if (name.equals("t") || name.equals("prep")) {
             /* 2nd argument expected to be a string literal (possible with injections) */
             final StringLiteralExpression messageLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(params[1], resolve);
             if (null != messageLiteral && messageLiteral.getTextLength() > 2) {
+                categoryLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(params[0], resolve);
                 messages.put(messageLiteral, params[1]);
             }
         }
@@ -55,9 +52,27 @@ final public class TranslationCallsProcessUtil {
                     messages.put(messageLiteral, literalCandidate);
                 }
             }
+            categoryLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(params[0], resolve);
         }
 
-        return 0 == messages.size() ? null : new ProcessingResult(categoryLiteral, messages);
+        // CraftCms\Cms\Support\Facades\I18N::translate(), CraftCms\Cms\Translation\I18N::translate(), Yiisoft\Translator\Translator::translate()
+        if (name.equals("translate")) {
+            // @method translate($message, $parameters = [], $category = null,  $locale = null)
+            // function        t($id,      $parameters = [], $category = 'app', $locale = null)
+            final StringLiteralExpression messageLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(params[0], resolve);
+            if (null != messageLiteral && messageLiteral.getTextLength() > 2) {
+                // TODO: fallback to string-literal('app'), e.g. PhpPsiElementFactory.createFromText(project, UnaryExpression.class, "!$x")
+                categoryLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(params.length >= 3 ? params[2] : null, resolve);
+                messages.put(messageLiteral, params[0]);
+            }
+        }
+
+        /* category needs to be resolved and without any injections */
+        if (messages.isEmpty() || null == categoryLiteral || null != categoryLiteral.getFirstPsiChild() || categoryLiteral.getTextLength() <= 2) {
+            return null;
+        }
+
+        return new ProcessingResult(categoryLiteral, messages);
     }
 
     static public class ProcessingResult {

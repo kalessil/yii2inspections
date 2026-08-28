@@ -29,4 +29,20 @@ function stringsDiscoveryWrapper($view) {
     Yii::t('app', "With '");
     Yii::t('app', 'With \'');
     $view->registerTranslations('app', ['Existing translation']);
+
+    CraftCms\Cms\Support\Facades\I18N::translate(<weak_warning descr="[Yii2] The message doesn't have any translations or doesn't belong to the category">$nonExistingMessage</weak_warning>, [], 'app');
+    CraftCms\Cms\Translation\I18N::translate(<weak_warning descr="[Yii2] The message doesn't have any translations or doesn't belong to the category">$nonExistingMessage</weak_warning>, [], 'app');
+    Yiisoft\Translator\Translator::translate(<weak_warning descr="[Yii2] The message doesn't have any translations or doesn't belong to the category">$nonExistingMessage</weak_warning>, [], 'app');
+
+    CraftCms\Cms\Support\Facades\I18N::translate(<weak_warning descr="[Yii2] The message doesn't have any translations or doesn't belong to the category">$nonExistingMessage</weak_warning>);
+    CraftCms\Cms\Translation\I18N::translate(<weak_warning descr="[Yii2] The message doesn't have any translations or doesn't belong to the category">$nonExistingMessage</weak_warning>);
+    Yiisoft\Translator\Translator::translate(<weak_warning descr="[Yii2] The message doesn't have any translations or doesn't belong to the category">$nonExistingMessage</weak_warning>);
+
+    CraftCms\Cms\Support\Facades\I18N::translate('Existing translation', [], 'app');
+    CraftCms\Cms\Translation\I18N::translate('Existing translation', [], 'app');
+    Yiisoft\Translator\Translator::translate('Existing translation', [], 'app');
+
+    CraftCms\Cms\Support\Facades\I18N::translate('Existing translation');
+    CraftCms\Cms\Translation\I18N::translate('Existing translation');
+    Yiisoft\Translator\Translator::translate('Existing translation');
 }
