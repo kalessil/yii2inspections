@@ -1,6 +1,8 @@
 package com.kalessil.phpStorm.yii2inspections.utils;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
@@ -24,17 +26,13 @@ final public class TranslationCallsProcessUtil {
 
     /* Returns null if category is not clean or empty string literal or no reasonable messages were found*/
     @Nullable
-    static public ProcessingResult process(@NotNull MethodReference reference, boolean resolve) {
-        final String name         = reference.getName();
-        final PsiElement[] params = reference.getParameters();
-        if (null == name || params.length < 2 || (! name.equals("t") && ! name.equals("registerTranslations") && ! name.equals("prep") && ! name.equals("translate"))) {
-            return null;
-        }
-
-        StringLiteralExpression categoryLiteral = null;
+    static public ProcessingResult process(@NotNull MethodReference reference, boolean resolve, Project project) {
+        final String name                                       = reference.getName();
+        final PsiElement[] params                               = reference.getParameters();
+        StringLiteralExpression categoryLiteral                 = null;
         final Map<StringLiteralExpression, PsiElement> messages = new HashMap<>();
 
-        if (name.equals("t") || name.equals("prep")) {
+        if (("t".equals(name) || "prep".equals(name)) && params.length >= 2) {
             /* 2nd argument expected to be a string literal (possible with injections) */
             final StringLiteralExpression messageLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(params[1], resolve);
             if (null != messageLiteral && messageLiteral.getTextLength() > 2) {
@@ -43,7 +41,7 @@ final public class TranslationCallsProcessUtil {
             }
         }
 
-        if (name.equals("registerTranslations") && params[1] instanceof ArrayCreationExpression) {
+        if ("registerTranslations".equals(name) && params.length >= 2 && params[1] instanceof ArrayCreationExpression) {
             /* 2nd argument expected to be an inline array with string literal (possible with injections) */
             for (PsiElement child : params[1].getChildren()) {
                 final PsiElement literalCandidate            = child.getFirstChild();
@@ -56,13 +54,13 @@ final public class TranslationCallsProcessUtil {
         }
 
         // CraftCms\Cms\Support\Facades\I18N::translate(), CraftCms\Cms\Translation\I18N::translate(), Yiisoft\Translator\Translator::translate()
-        if (name.equals("translate")) {
+        if ("translate".equals(name) && params.length > 0) {
             // @method translate($message, $parameters = [], $category = null,  $locale = null)
             // function        t($id,      $parameters = [], $category = 'app', $locale = null)
             final StringLiteralExpression messageLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(params[0], resolve);
             if (null != messageLiteral && messageLiteral.getTextLength() > 2) {
-                // TODO: fallback to string-literal('app'), e.g. PhpPsiElementFactory.createFromText(project, UnaryExpression.class, "!$x")
-                categoryLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(params.length >= 3 ? params[2] : null, resolve);
+                final PsiElement category = params.length >= 3 ? params[2] : PhpPsiElementFactory.createFromText(project, StringLiteralExpression.class, "'app'");
+                categoryLiteral           = StringLiteralExtractUtil.resolveAsStringLiteral(category, resolve);
                 messages.put(messageLiteral, params[0]);
             }
         }

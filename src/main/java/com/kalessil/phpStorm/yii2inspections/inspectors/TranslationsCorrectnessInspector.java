@@ -72,7 +72,7 @@ final public class TranslationsCorrectnessInspector extends PhpInspection {
             @Override
             public void visitPhpMethodReference(MethodReference reference) {
                 /* ensure that it's a target call; category is not empty and has no injections; we have messages */
-                TranslationCallsProcessUtil.ProcessingResult extracted = TranslationCallsProcessUtil.process(reference, true);
+                TranslationCallsProcessUtil.ProcessingResult extracted = TranslationCallsProcessUtil.process(reference, true, holder.getProject());
                 if (null == extracted) {
                     return;
                 }

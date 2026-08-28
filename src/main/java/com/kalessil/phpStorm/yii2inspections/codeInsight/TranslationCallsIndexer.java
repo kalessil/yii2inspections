@@ -63,7 +63,7 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
             if (PhpFileType.INSTANCE == fileType) {
                 final Collection<MethodReference> calls = PsiTreeUtil.findChildrenOfType(fileContent.getPsiFile(), MethodReference.class);
                 for (MethodReference reference : calls) {
-                    TranslationCallsProcessUtil.ProcessingResult extracted = TranslationCallsProcessUtil.process(reference, false);
+                    TranslationCallsProcessUtil.ProcessingResult extracted = TranslationCallsProcessUtil.process(reference, false, reference.getProject());
                     if (null == extracted) {
                         continue;
                     }
