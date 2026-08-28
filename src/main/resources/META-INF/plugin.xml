@@ -2,7 +2,7 @@
     <!-- general information -->
     <id>com.kalessil.phpStorm.yii2inspections</id>
     <name>Yii2 Inspections</name>
-    <version>1.0.6</version>
+    <version>2.0.0</version>
     <vendor email="ea.inspections.team@gmail.com">EA Inspections Team</vendor>
 
     <!-- description and change notes -->
@@ -19,7 +19,7 @@ Yii 2 and Craft CMS 3 Inspections for PhpStorm/IdeaUltimate
     </change-notes>
 
     <!-- platform dependencies declaration -->
-    <idea-version since-build="162.1889"/>
+    <idea-version since-build="243"/>
     <depends>com.jetbrains.php</depends>
     <depends>com.jetbrains.twig</depends>
     <depends>com.intellij.modules.platform</depends>
