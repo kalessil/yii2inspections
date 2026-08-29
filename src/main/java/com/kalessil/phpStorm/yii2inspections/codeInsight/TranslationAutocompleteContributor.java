@@ -134,7 +134,7 @@ public class TranslationAutocompleteContributor extends CompletionContributor {
         final ElementPattern<PsiElement> filter = PlatformPatterns.psiElement(PsiElement.class)
                 .withParent(PlatformPatterns.psiElement(StringLiteralExpression.class)
                     .withParent(PlatformPatterns.psiElement(PhpElementTypes.PARAMETER_LIST)
-                        .withParent(PlatformPatterns.psiElement(PhpElementTypes.METHOD_REFERENCE))))
+                        .withParent(PlatformPatterns.psiElement(FunctionReference.class))))
                 .withLanguage(PhpLanguage.INSTANCE);
 
         extend(CompletionType.BASIC, filter, provider);
