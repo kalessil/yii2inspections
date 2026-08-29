@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression;
+import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.kalessil.phpStorm.yii2inspections.inspectors.utils.StringLiteralExtractUtil;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 /*
  * This file is part of the Yii2 Inspections package.
@@ -23,8 +25,9 @@ import java.util.Map;
  */
 
 final public class TranslationCallsProcessUtil {
+    static private Map<Project, StringLiteralExpression> fallbacks = new WeakHashMap<>();
 
-    /* Returns null if category is not clean or empty string literal or no reasonable messages were found*/
+    /* Returns null if category is not clean or empty string literal or no reasonable messages were found */
     @Nullable
     static public ProcessingResult process(@NotNull MethodReference reference, boolean resolve, Project project) {
         final String name                                       = reference.getName();
@@ -55,12 +58,44 @@ final public class TranslationCallsProcessUtil {
 
         // CraftCms\Cms\Support\Facades\I18N::translate(), CraftCms\Cms\Translation\I18N::translate(), Yiisoft\Translator\Translator::translate()
         if ("translate".equals(name) && params.length > 0) {
-            // @method translate($message, $parameters = [], $category = null,  $locale = null)
-            // function        t($id,      $parameters = [], $category = 'app', $locale = null)
             final StringLiteralExpression messageLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(params[0], resolve);
             if (null != messageLiteral && messageLiteral.getTextLength() > 2) {
-                final PsiElement category = params.length >= 3 ? params[2] : PhpPsiElementFactory.createFromText(project, StringLiteralExpression.class, "'app'");
-                categoryLiteral           = StringLiteralExtractUtil.resolveAsStringLiteral(category, resolve);
+                StringLiteralExpression fallback = fallbacks.getOrDefault(project, null);
+                if (fallback == null) {
+                    fallback = PhpPsiElementFactory.createFromText(project, StringLiteralExpression.class, "'app'");
+                    fallbacks.put(project, fallback);
+                }
+                categoryLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(params.length >= 3 ? params[2] : fallback, resolve);
+                messages.put(messageLiteral, params[0]);
+            }
+        }
+
+        /* category needs to be resolved and without any injections */
+        if (messages.isEmpty() || null == categoryLiteral || null != categoryLiteral.getFirstPsiChild() || categoryLiteral.getTextLength() <= 2) {
+            return null;
+        }
+
+        return new ProcessingResult(categoryLiteral, messages);
+    }
+
+    /* Returns null if category is not clean or empty string literal or no reasonable messages were found */
+    @Nullable
+    static public ProcessingResult process(@NotNull FunctionReference reference, boolean resolve, Project project) {
+        final String name                                       = reference.getName();
+        final PsiElement[] params                               = reference.getParameters();
+        StringLiteralExpression categoryLiteral                 = null;
+        final Map<StringLiteralExpression, PsiElement> messages = new HashMap<>();
+
+        // CraftCms\Cms\t()
+        if ("t".equals(name) && params.length > 0) {
+            final StringLiteralExpression messageLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(params[0], resolve);
+            if (null != messageLiteral && messageLiteral.getTextLength() > 2) {
+                StringLiteralExpression fallback = fallbacks.getOrDefault(project, null);
+                if (fallback == null) {
+                    fallback = PhpPsiElementFactory.createFromText(project, StringLiteralExpression.class, "'app'");
+                    fallbacks.put(project, fallback);
+                }
+                categoryLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(params.length >= 3 ? params[2] : fallback, resolve);
                 messages.put(messageLiteral, params[0]);
             }
         }

@@ -9,6 +9,7 @@ import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
 import com.jetbrains.php.lang.PhpFileType;
+import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.util.PhpStringUtil;
@@ -61,9 +62,14 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
 
             final FileType fileType = fileContent.getFileType();
             if (PhpFileType.INSTANCE == fileType) {
-                final Collection<MethodReference> calls = PsiTreeUtil.findChildrenOfType(fileContent.getPsiFile(), MethodReference.class);
-                for (MethodReference reference : calls) {
-                    TranslationCallsProcessUtil.ProcessingResult extracted = TranslationCallsProcessUtil.process(reference, false, reference.getProject());
+                final Collection<FunctionReference> calls = PsiTreeUtil.findChildrenOfType(fileContent.getPsiFile(), FunctionReference.class);
+                for (final FunctionReference reference : calls) {
+                    TranslationCallsProcessUtil.ProcessingResult extracted;
+                    if (reference instanceof MethodReference) {
+                        extracted = TranslationCallsProcessUtil.process((MethodReference) reference, false, reference.getProject());
+                    } else {
+                        extracted = TranslationCallsProcessUtil.process(reference, false, reference.getProject());
+                    }
                     if (null == extracted) {
                         continue;
                     }
@@ -152,6 +158,6 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
 
     @Override
     public int getVersion() {
-        return 2;
+        return 3;
     }
 }

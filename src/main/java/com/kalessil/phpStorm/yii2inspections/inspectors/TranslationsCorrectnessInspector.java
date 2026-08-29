@@ -9,6 +9,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.php.lang.PhpFileType;
 import com.jetbrains.php.lang.inspections.PhpInspection;
+import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor;
@@ -18,6 +19,7 @@ import com.kalessil.phpStorm.yii2inspections.utils.MessagesPresentationUtil;
 import com.kalessil.phpStorm.yii2inspections.utils.TranslationCallsProcessUtil;
 import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Collections;
@@ -70,9 +72,17 @@ final public class TranslationsCorrectnessInspector extends PhpInspection {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new PhpElementVisitor() {
             @Override
+            public void visitPhpFunctionCall(FunctionReference reference) {
+                this.analyze(TranslationCallsProcessUtil.process(reference, true, holder.getProject()), reference);
+            }
+
+            @Override
             public void visitPhpMethodReference(MethodReference reference) {
+                this.analyze(TranslationCallsProcessUtil.process(reference, true, holder.getProject()), reference);
+            }
+
+            private void analyze(@Nullable TranslationCallsProcessUtil.ProcessingResult extracted, @NotNull FunctionReference reference) {
                 /* ensure that it's a target call; category is not empty and has no injections; we have messages */
-                TranslationCallsProcessUtil.ProcessingResult extracted = TranslationCallsProcessUtil.process(reference, true, holder.getProject());
                 if (null == extracted) {
                     return;
                 }
