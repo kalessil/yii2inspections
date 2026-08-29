@@ -11,6 +11,7 @@ import com.intellij.util.ProcessingContext;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.php.lang.PhpLanguage;
 import com.jetbrains.php.lang.parser.PhpElementTypes;
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory;
 import com.jetbrains.php.lang.psi.elements.FunctionReference;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.ParameterList;
@@ -30,6 +31,8 @@ import java.util.*;
  */
 
 public class TranslationAutocompleteContributor extends CompletionContributor {
+    static private final Map<Project, StringLiteralExpression> fallbacks = new WeakHashMap<>();
+
     public TranslationAutocompleteContributor() {
         final CompletionProvider<CompletionParameters> provider = new CompletionProvider<>() {
             @Override
@@ -85,7 +88,13 @@ public class TranslationAutocompleteContributor extends CompletionContributor {
                 if (autocompleteCategory || autocompleteMessage) {
                     StringLiteralExpression categoryLiteral = null;
                     if (autocompleteMessage) {
-                        categoryLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(arguments[categoryPosition], true);
+                        final Project project            = reference.getProject();
+                        StringLiteralExpression fallback = fallbacks.getOrDefault(project, null);
+                        if (fallback == null) {
+                            fallback = PhpPsiElementFactory.createFromText(project, StringLiteralExpression.class, "'app'");
+                            fallbacks.put(project, fallback);
+                        }
+                        categoryLiteral = StringLiteralExtractUtil.resolveAsStringLiteral(arguments.length > categoryPosition ? arguments[categoryPosition] : fallback, true);
                         if (categoryLiteral == null) {
                             return;
                         }
