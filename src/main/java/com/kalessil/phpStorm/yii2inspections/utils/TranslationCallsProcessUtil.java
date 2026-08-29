@@ -25,7 +25,7 @@ import java.util.WeakHashMap;
  */
 
 final public class TranslationCallsProcessUtil {
-    static private Map<Project, StringLiteralExpression> fallbacks = new WeakHashMap<>();
+    static private final Map<Project, StringLiteralExpression> fallbacks = new WeakHashMap<>();
 
     /* Returns null if category is not clean or empty string literal or no reasonable messages were found */
     @Nullable
