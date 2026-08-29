@@ -2,6 +2,7 @@ package com.kalessil.phpStorm.yii2inspections.codeInsight;
 
 import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.indexing.*;
@@ -63,12 +64,13 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
             final FileType fileType = fileContent.getFileType();
             if (PhpFileType.INSTANCE == fileType) {
                 final Collection<FunctionReference> calls = PsiTreeUtil.findChildrenOfType(fileContent.getPsiFile(), FunctionReference.class);
+                final Project project                     = fileContent.getPsiFile().getProject();
                 for (final FunctionReference reference : calls) {
                     TranslationCallsProcessUtil.ProcessingResult extracted;
                     if (reference instanceof MethodReference) {
-                        extracted = TranslationCallsProcessUtil.process((MethodReference) reference, false, reference.getProject());
+                        extracted = TranslationCallsProcessUtil.process((MethodReference) reference, false, project);
                     } else {
-                        extracted = TranslationCallsProcessUtil.process(reference, false, reference.getProject());
+                        extracted = TranslationCallsProcessUtil.process(reference, false, project);
                     }
                     if (null == extracted) {
                         continue;
@@ -158,6 +160,6 @@ final public class TranslationCallsIndexer extends FileBasedIndexExtension<Strin
 
     @Override
     public int getVersion() {
-        return 3;
+        return 4;
     }
 }
